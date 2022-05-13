@@ -1,5 +1,7 @@
 import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
+import { buildBoundingBox } from './colision.js';
+import {inicializeKeyboard, keyboardUpdate} from './movePlayer.js'
 import {createGroundPlaneWired} from '../libs/util/util.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
@@ -21,13 +23,16 @@ let plane = createGroundPlaneWired(200, 300);
 plane.translateY(100);
 scene.add(plane);
 
-// create a cube
+// create a airPlane
 var airPlaneGeometry = new THREE.ConeGeometry(2, 5, 20);
 var airPlaneMaterial = new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"});
 var airPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
 
 airPlane.position.set(0.0, 3.0, 12);
 airPlane.rotateX(-3.14/2);
+
+// create a keyboard
+var keyboard = inicializeKeyboard();
 
 // add the airPlane to the scene
 scene.add(airPlane);
@@ -47,6 +52,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 render();
 function render()
 {
+  keyboardUpdate(keyboard, airPlane);
   trackballControls.update(); // Enable mouse movements
   cameraMove();
   requestAnimationFrame(render);
