@@ -2,14 +2,14 @@ import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
 import { buildBoundingBox } from './colision.js';
 import {inicializeKeyboard, keyboardUpdate} from './movePlayer.js'
+import { createEnemy } from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initCamera,
         initDefaultBasicLight,
         InfoBox,
-        onWindowResize,
-        createGroundPlaneXZ} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
@@ -37,6 +37,7 @@ var keyboard = inicializeKeyboard();
 // add the airPlane to the scene
 scene.add(airPlane);
 
+//================= APAGAR ESSA PARTE NO FINAL DE TUDO=================
 var controls = new InfoBox();
   controls.add("Basic Scene");
   controls.addParagraph();
@@ -54,20 +55,22 @@ function render()
 {
   keyboardUpdate(keyboard, airPlane);
   trackballControls.update(); // Enable mouse movements
-  cameraMove();
+  worldMovement();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
+
+  createEnemy(scene);
 }
 
-function cameraMove() {
-  plane.translateY(-1); //Mudar para -0.1
+
+function worldMovement() {
+  plane.translateY(-0.1);
   if(plane.position.y < -25E-15) {
-    console.log(plane.position);
     var planoAux = createGroundPlaneWired(200, 300);
     planoAux.translateY(120);
     scene.add(planoAux);
     plane.removeFromParent();
-    planoAux.translateY(-1);
+    planoAux.translateY(-0.1);
     plane.copy(planoAux);
     scene.add(plane);
     planoAux.removeFromParent();
