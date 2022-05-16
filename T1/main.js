@@ -53,7 +53,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 render();
 function render()
 {
-  keyboardUpdate(keyboard, airPlane);
+  keyboardUpdate(keyboard, airPlane, scene);
   trackballControls.update(); // Enable mouse movements
   worldMovement();
   requestAnimationFrame(render);
