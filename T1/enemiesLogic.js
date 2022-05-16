@@ -1,4 +1,5 @@
 import * as THREE from  'three';
+//import { worldMovement } from './worldMovement.js';
 
 var enemiesOnScreen = 0;
 var enemyMaterial = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"})
