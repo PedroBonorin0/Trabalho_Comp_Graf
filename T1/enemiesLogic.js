@@ -1,5 +1,5 @@
-import * as THREE from  'three';
-//import { worldMovement } from './worldMovement.js';
+/*import * as THREE from  'three';
+import { worldMovement } from './main.js';
 
 var enemiesOnScreen = 0;
 var enemyMaterial = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"})
@@ -11,9 +11,10 @@ export function createEnemy(scene) {
     if(canCreate) {
       canCreate = false;
       var newEnemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
-      newEnemy.position.set(generateRandomX(), 3, -40);
+      var positionY = -40;
+      newEnemy.position.set(generateRandomX(), 3, positionY);
       scene.add(newEnemy);
-      
+    
       enemiesOnScreen++;
       setTimeout(() => {
         canCreate = true;
@@ -30,10 +31,6 @@ export function placeEnemy() {
   return (10, 25, 100);
 }
 
-function moveEnemy(newEnemy) {
-  newEnemy.translateY(-1 * Math.floor(Math.random() * (0.5 - 0.2) ) + 0.2);
-}
-
 export {
   enemiesOnScreen,
-};
+};*/
