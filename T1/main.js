@@ -13,10 +13,11 @@ import {initRenderer,
 
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
-var camera = initCamera(new THREE.Vector3(0, 50, 25)); // Init camera in this position
+var camera = initCamera(new THREE.Vector3(0, 40, 25)); // Init camera in this position
 initDefaultBasicLight(scene);
 
 var trackballControls = new TrackballControls( camera, renderer.domElement );
+
 
 // create the ground plane
 let plane = createGroundPlaneWired(200, 300);
@@ -36,6 +37,25 @@ var keyboard = inicializeKeyboard();
 
 // add the airPlane to the scene
 scene.add(airPlane);
+
+//create a enemy
+var enemiesOnScreen = 0;
+var enemyMaterial = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"})
+var enemyGeometry = new THREE.BoxGeometry(5, 5, 5);
+var canCreate = true;
+
+function generateRandomX() {
+  return Math.floor(Math.random() * (30 - (-30)) ) + (-30);
+}
+
+export function placeEnemy() {
+  return (10, 25, 100);
+}
+
+export {
+  enemiesOnScreen,
+};
+
 
 //================= APAGAR ESSA PARTE NO FINAL DE TUDO=================
 var controls = new InfoBox();

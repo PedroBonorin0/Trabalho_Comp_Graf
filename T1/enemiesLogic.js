@@ -9,9 +9,10 @@ export function createEnemy(scene) {
   if(enemiesOnScreen < 5 && canCreate) {
       canCreate = false;
       var newEnemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
-      newEnemy.position.set(generateRandomX(), 3, -40);
+      var positionY = -40;
+      newEnemy.position.set(generateRandomX(), 3, positionY);
       scene.add(newEnemy);
-      
+    
       enemiesOnScreen++;
       setTimeout(() => {
         canCreate = true;
