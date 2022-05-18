@@ -6,8 +6,7 @@ var enemyGeometry = new THREE.BoxGeometry(5, 5, 5);
 var canCreate = true;
 
 export function createEnemy(scene) {
-  if(enemiesOnScreen < 5) {
-    if(canCreate) {
+  if(enemiesOnScreen < 5 && canCreate) {
       canCreate = false;
       var newEnemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
       newEnemy.position.set(generateRandomX(), 3, -40);
@@ -17,8 +16,8 @@ export function createEnemy(scene) {
       setTimeout(() => {
         canCreate = true;
       }, 1000);
-    }
   }
+  return newEnemy;
 }
 
 function generateRandomX() {
@@ -29,8 +28,14 @@ export function placeEnemy() {
   return (10, 25, 100);
 }
 
-function moveEnemy(newEnemy) {
-  newEnemy.translateY(-1 * Math.floor(Math.random() * (0.5 - 0.2) ) + 0.2);
+export function moveEnemies(enemiesOnScreen) {
+  for(const enemy of enemiesOnScreen) {
+    enemy.translateZ(-1 * generateRandomSpeed());
+  }
+}
+
+function generateRandomSpeed() {
+  return Math.floor(Math.random() * (0.5 - (-0.2)) ) + (-0.2);
 }
 
 export {

@@ -2,7 +2,7 @@ import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
 import { buildBoundingBox } from './colision.js';
 import {inicializeKeyboard, keyboardUpdate} from './movePlayer.js'
-import { createEnemy } from './enemiesLogic.js';
+import { createEnemy, moveEnemies } from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
@@ -50,6 +50,8 @@ var controls = new InfoBox();
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
+var enemiesOnScreen = [];
+
 render();
 function render()
 {
@@ -59,9 +61,12 @@ function render()
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
 
-  createEnemy(scene);
+  var enemy = createEnemy(scene);
+  if(enemy)
+    enemiesOnScreen.push(enemy);
+  
+  moveEnemies(enemiesOnScreen);
 }
-
 
 function worldMovement() {
   plane.translateY(-0.1);
@@ -76,3 +81,5 @@ function worldMovement() {
     planoAux.removeFromParent();
   }
 }
+
+
