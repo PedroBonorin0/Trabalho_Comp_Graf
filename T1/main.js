@@ -2,7 +2,7 @@ import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
 import { buildBoundingBox } from './colision.js';
 import {inicializeKeyboard, keyboardUpdate} from './movePlayer.js'
-import { createEnemy, moveEnemies } from './enemiesLogic.js';
+import { createEnemy } from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
@@ -38,25 +38,6 @@ var keyboard = inicializeKeyboard();
 // add the airPlane to the scene
 scene.add(airPlane);
 
-//create a enemy
-var enemiesOnScreen = 0;
-var enemyMaterial = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"})
-var enemyGeometry = new THREE.BoxGeometry(5, 5, 5);
-var canCreate = true;
-
-function generateRandomX() {
-  return Math.floor(Math.random() * (30 - (-30)) ) + (-30);
-}
-
-export function placeEnemy() {
-  return (10, 25, 100);
-}
-
-export {
-  enemiesOnScreen,
-};
-
-
 //================= APAGAR ESSA PARTE NO FINAL DE TUDO=================
 var controls = new InfoBox();
   controls.add("Basic Scene");
@@ -70,8 +51,6 @@ var controls = new InfoBox();
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-var enemiesOnScreen = [];
-
 render();
 function render()
 {
@@ -81,11 +60,7 @@ function render()
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
 
-  var enemy = createEnemy(scene);
-  if(enemy)
-    enemiesOnScreen.push(enemy);
-  
-  moveEnemies(enemiesOnScreen);
+  createEnemy(scene);
 }
 
 function worldMovement() {
