@@ -13,14 +13,13 @@ import {initRenderer,
  
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
-var camera = initCamera(new THREE.Vector3(0, 40, 25)); // Init camera in this position
+var camera = initCamera(new THREE.Vector3(0, 60, 100)); // Init camera in this position
 initDefaultBasicLight(scene);
  
 var trackballControls = new TrackballControls( camera, renderer.domElement );
  
- 
 // create the ground plane
-let plane = createGroundPlaneWired(200, 300);
+let plane = createGroundPlaneWired(500, 500);
 plane.translateY(100);
 scene.add(plane);
  
@@ -51,7 +50,6 @@ var controls = new InfoBox();
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
  
-var enemiesOnScreen = [];
 var shotOnScreen = [];
  
 render();
@@ -73,20 +71,51 @@ function render()
  }
  moveShot(shotOnScreen);
 }
- 
+
+var criaPlano = false;
+var criaPlanoAux = true;
+var planoAux = null;
+
 function worldMovement() {
- plane.translateY(-0.1);
- if(plane.position.y < -25E-15) {
-   var planoAux = createGroundPlaneWired(200, 300);
-   planoAux.translateY(120);
+  if(plane)
+    plane.translateY(-0.5);
+  if(planoAux)
+    planoAux.translateY(-0.5);
+
+  if(plane && plane.position.y < -7E-14) {
+    plane.removeFromParent();
+    plane = null;
+    criaPlano = true;
+  }
+
+  if(planoAux && planoAux.position.y < -7E-14) {
+    planoAux.removeFromParent();
+    planoAux = null;
+    criaPlanoAux = true;
+  }
+    
+  if(criaPlanoAux && plane && plane.position.y < 2E-14) {
+   criaPlanoAux = false;
+   planoAux = createGroundPlaneWired(500, 500);
+   planoAux.translateY(590);
    scene.add(planoAux);
-   plane.removeFromParent();
-   planoAux.translateY(-0.1);
-   plane.copy(planoAux);
-   scene.add(plane);
-   planoAux.removeFromParent();
- }
+  }
+  
+  if(criaPlano && planoAux && planoAux.position.y < 2E-14) {
+    criaPlano = false;
+    plane = createGroundPlaneWired(500, 500);
+    plane.translateY(590);
+    scene.add(plane);
+  }
 }
 
 
 
+
+//  planoAux.translateY(120);
+//  scene.add(planoAux);
+//  plane.removeFromParent();
+//  planoAux.translateY(-0.1);
+//  plane.copy(planoAux);
+//  scene.add(plane);
+//  planoAux.removeFromParent();

@@ -2,42 +2,53 @@ import * as THREE from  'three';
 
 var enemiesOnScreenCounter = 0;
 var enemyMaterial = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"})
-var enemyGeometry = new THREE.BoxGeometry(5, 5, 5);
+var enemyGeometry = new THREE.BoxGeometry(14, 14, 14);
 var canCreate = true;
 
 var enemiesOnScreen = [];
 
 export function createEnemy(scene) {
-  if(enemiesOnScreenCounter < 7 && canCreate) {
-      canCreate = false;
-      var newEnemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
+  if(enemiesOnScreenCounter < 10 && canCreate) {
+    canCreate = false;
+    var newEnemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
+    newEnemy.uniqueId = generateUniqueId();
 
-      enemiesOnScreen.push(newEnemy);
-      newEnemy.speed = generateRandomSpeed();
+    enemiesOnScreen.push(newEnemy);
+    newEnemy.speed = generateRandomSpeed();
 
-      newEnemy.position.set(generateRandomX(), 3, -40);
-      scene.add(newEnemy);
-    
-      enemiesOnScreenCounter++;
-      setTimeout(() => {
-        canCreate = true;
-      }, 1000);
+    newEnemy.position.set(generateRandomX(), 3, -350);
+    scene.add(newEnemy);
+  
+    enemiesOnScreenCounter++;
+    setTimeout(() => {
+      canCreate = true;
+    }, 1000);
   }
   moveEnemies();
 }
 
 function generateRandomX() {
-  return Math.floor(Math.random() * (30 - (-30)) ) + (-30);
+  return Math.floor(Math.random() * (50 - (-50)) ) + (-50);
 }
 
 function moveEnemies() {
   for(const enemy of enemiesOnScreen) {
     enemy.translateZ(enemy.speed);
+    if(enemy.position.z > 90) {
+      enemy.removeFromParent();
+      const indexToRemove = enemiesOnScreen.indexOf(enemy);
+      enemiesOnScreen.splice(indexToRemove, 1);
+      enemiesOnScreenCounter--;
+    }
   }
 }
 
 function generateRandomSpeed() {
-  return Math.random() * (0.8 - (0.2)) + (0.2);
+  return Math.random() * (2 - (0.5)) + (0.5);
+}
+
+function generateUniqueId() {
+  return new Date().getTime() 
 }
 
 // import * as THREE from  'three';

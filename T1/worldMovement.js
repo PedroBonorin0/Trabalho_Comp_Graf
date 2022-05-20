@@ -1,10 +1,3 @@
-import {createGroundPlaneWired} from '../libs/util/util.js';
-
-// create the ground plane
-let plane = createGroundPlaneWired(200, 300);
-plane.translateY(100);
-scene.add(plane);
-
 export function worldMovement() {
   plane.translateY(-0.1); //Mudar para -0.1
   if(plane.position.y < -25E-15) {
