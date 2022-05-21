@@ -28,7 +28,7 @@ export function buildShot(scene, player){
 export function moveShot(vetShot){
    for(const shot of vetShot){
        shot.translateZ(-2);
-       if(shot.position.z < -30){
+       if(shot.position.z < -190){
             shot.removeFromParent();
             vetShot.shift();
             shotOnScreenCounter--;
@@ -44,20 +44,25 @@ export function inicializeKeyboard(){
 
 export function keyboardUpdate(kb, obj){
    kb.update();
-   if (kb.pressed("up") && obj.position.y < 3.032){
+   if (kb.pressed("up") && obj.position.y < 3.22){
+       console.log(obj.position.y)
        obj.translateY(2);
    }
    if (kb.pressed("down") && obj.position.y > 2.994){
        obj.translateY(-2);
+       console.log(obj.position.y)
    }
-   if (kb.pressed("right") && obj.position.x < 38){
+   if (kb.pressed("right") && obj.position.x < 57){
        obj.translateX(2);
+       console.log(obj.position.x)
    }
-   if (kb.pressed("left") && obj.position.x > -38){
+   if (kb.pressed("left") && obj.position.x > -57){
        obj.translateX(-2);
+       console.log(obj.position.x)
    }
 }
 
+// Funções de atualização de variáveis ----------------------------------------------------------------
 export function setCanCreateShot(){
     canCreateShot = true;
 }

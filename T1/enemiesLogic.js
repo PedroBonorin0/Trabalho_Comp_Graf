@@ -1,12 +1,15 @@
 import * as THREE from  'three';
 
+// inicialize elements -------------------------------------------------------------------------------------------------------------
 var enemiesOnScreenCounter = 0;
 var enemyMaterial = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"})
 var enemyGeometry = new THREE.BoxGeometry(14, 14, 14);
 var canCreate = true;
 
+// create vet of enemies -----------------------------------------------------------------------------------------------------------
 var enemiesOnScreen = [];
 
+// enemies logic functions ---------------------------------------------------------------------------------------------------------
 export function createEnemy(scene) {
   if(enemiesOnScreenCounter < 10 && canCreate) {
     canCreate = false;
@@ -28,7 +31,7 @@ export function createEnemy(scene) {
 }
 
 function generateRandomX() {
-  return Math.floor(Math.random() * (50 - (-50)) ) + (-50);
+  return Math.floor(Math.random() * (57 - (-57)) ) + (-57);
 }
 
 function moveEnemies() {
@@ -43,6 +46,7 @@ function moveEnemies() {
   }
 }
 
+// auxiliar functions --------------------------------------------------------------------------------------------------------------
 function generateRandomSpeed() {
   return Math.random() * (2 - (0.5)) + (0.5);
 }
@@ -62,6 +66,8 @@ export function setEnemiesCounter(){
 export {
   enemiesOnScreen,
 }
+
+
 // import * as THREE from  'three';
 
 // var enemyOnScreenCounter = 0;
