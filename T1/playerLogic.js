@@ -2,12 +2,12 @@ import KeyboardState from '../libs/util/KeyboardState.js';
 import * as THREE from  'three';
 
 // Variáveis auxiliares ----------------------------------------------------------------------------
-var shotOnScreen = 0;
+var shotOnScreenCounter = 0;
 var canCreateShot = true;
 
 // Funções para lógica dos projéteis ---------------------------------------------------------------
 export function buildShot(scene, player){
-   if(shotOnScreen < 1 && canCreateShot) {
+   if(shotOnScreenCounter < 10 && canCreateShot) {
        canCreateShot = false;
        var newShot = new THREE.Mesh(
            new THREE.SphereGeometry(0.5, 10, 10),
@@ -16,7 +16,7 @@ export function buildShot(scene, player){
 
        newShot.position.set(player.position.x, player.position.y, player.position.z);
        scene.add(newShot);
-       shotOnScreen++;
+       shotOnScreenCounter++;
 
        setTimeout(() => {
            canCreateShot = true;
@@ -31,7 +31,7 @@ export function moveShot(vetShot){
        if(shot.position.z < -30){
             shot.removeFromParent();
             vetShot.shift();
-            shotOnScreen--;
+            shotOnScreenCounter--;
         }
    }
 }
@@ -56,4 +56,12 @@ export function keyboardUpdate(kb, obj){
    if (kb.pressed("left") && obj.position.x > -38){
        obj.translateX(-2);
    }
+}
+
+export function setCanCreateShot(){
+    canCreateShot = true;
+}
+
+export function setShotCounter(){
+    shotOnScreenCounter--;
 }

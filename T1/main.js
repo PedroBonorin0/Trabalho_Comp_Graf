@@ -1,8 +1,8 @@
 import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
-import { buildBoundingBox } from './colision.js';
+import { detectCollisionCubes, airPlaneColisions, shotColisions } from './colision.js';
 import {buildShot, inicializeKeyboard, keyboardUpdate, moveShot} from './playerLogic.js'
-import { createEnemy } from './enemiesLogic.js';
+import { createEnemy, enemiesOnScreen} from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer,
@@ -63,12 +63,14 @@ function render()
  
  createEnemy(scene);
  
- if(keyboard.pressed("space")){
+ if(keyboard.pressed("space") || keyboard.pressed("ctrl")){
    var shot = buildShot(scene, airPlane);
    if(shot){
      shotOnScreen.push(shot);
    }
  }
+ airPlaneColisions(airPlane, enemiesOnScreen);
+ shotColisions(shotOnScreen, enemiesOnScreen);
  moveShot(shotOnScreen);
 }
 

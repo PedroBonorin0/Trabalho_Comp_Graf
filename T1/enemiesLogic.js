@@ -51,6 +51,17 @@ function generateUniqueId() {
   return new Date().getTime() 
 }
 
+export function setCanCreateEnemie(){
+  canCreate = true;
+}
+
+export function setEnemiesCounter(){
+  enemiesOnScreenCounter--;
+}
+
+export {
+  enemiesOnScreen,
+}
 // import * as THREE from  'three';
 
 // var enemyOnScreenCounter = 0;
