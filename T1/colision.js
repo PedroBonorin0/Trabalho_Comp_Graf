@@ -28,7 +28,13 @@ export function detectCollisionCubes(object1, object2){
 export function airPlaneColisions(airPlane, enemiesVet){
   for (const enemy of enemiesVet){
     if(detectCollisionCubes(airPlane, enemy)){
-      removeAllEnemies(enemiesVet);
+      const indexEnemy = enemiesVet.indexOf(enemy)
+      enemiesVet.splice(indexEnemy, 1);
+      deadEnemies.push(enemy);
+
+      setEnemiesCounter();
+      setCanCreateEnemy(true);
+      
       airPlane.position.set(0.0, 4.0, 45);
       return;
     }
@@ -41,7 +47,7 @@ function removeAllEnemies(enemiesVet) {
     enemiesVet.unshift();
     setEnemiesCounter();
   }
-  setCanCreateEnemy();
+  setCanCreateEnemy(true);
 }
 
 export function shotColisions(shotVet, enemiesVet){
@@ -53,7 +59,7 @@ export function shotColisions(shotVet, enemiesVet){
         deadEnemies.push(enemy);
 
         setEnemiesCounter();
-        setCanCreateEnemy();
+        setCanCreateEnemy(true);
 
         shot.removeFromParent();
         const indexShot = shotVet.indexOf(shot)

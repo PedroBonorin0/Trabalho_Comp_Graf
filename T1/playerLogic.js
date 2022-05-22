@@ -10,7 +10,7 @@ export function buildShot(scene, player){
    if(shotOnScreenCounter < 10 && canCreateShot) {
        canCreateShot = false;
        var newShot = new THREE.Mesh(
-           new THREE.SphereGeometry(0.5, 10, 10),
+           new THREE.SphereGeometry(0.8, 10, 10),
            new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"})
        );
 
@@ -27,7 +27,7 @@ export function buildShot(scene, player){
  
 export function moveShot(vetShot){
    for(const shot of vetShot){
-       shot.translateZ(-2);
+       shot.translateZ(-4);
        if(shot.position.z < -190){
             shot.removeFromParent();
             vetShot.shift();
@@ -44,11 +44,11 @@ export function inicializeKeyboard(){
 
 export function keyboardUpdate(kb, obj){
    kb.update();
-   if (kb.pressed("up") && obj.position.y < 3.22){
+   if (kb.pressed("up") && obj.position.y < 4.22){
        console.log(obj.position.y)
        obj.translateY(2);
    }
-   if (kb.pressed("down") && obj.position.y > 2.994){
+   if (kb.pressed("down") && obj.position.y > 3.994){
        obj.translateY(-2);
        console.log(obj.position.y)
    }
