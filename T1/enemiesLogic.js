@@ -55,8 +55,8 @@ function generateUniqueId() {
   return new Date().getTime() 
 }
 
-export function setCanCreateEnemie(){
-  canCreate = true;
+export function setCanCreateEnemy(condition){
+  canCreate = condition;
 }
 
 export function setEnemiesCounter(){
@@ -64,6 +64,7 @@ export function setEnemiesCounter(){
 }
 
 export {
+  enemiesOnScreenCounter,
   enemiesOnScreen,
 }
 

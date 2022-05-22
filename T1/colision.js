@@ -1,7 +1,8 @@
 import * as THREE from  'three';
-import { setCanCreateEnemie, setEnemiesCounter } from './enemiesLogic.js';
+import { setCanCreateEnemy, setEnemiesCounter } from './enemiesLogic.js';
 import { setCanCreateShot, setShotCounter } from './playerLogic.js';
 
+var deadEnemies = [];
 
 // auxiliar functions -----------------------------------------------------------------------------------------------------
 export function buildBoundingBox(obj){
@@ -25,53 +26,65 @@ export function detectCollisionCubes(object1, object2){
 
 // detect colisions functions -------------------------------------------------------------------------------------------
 export function airPlaneColisions(airPlane, enemiesVet){
-      for (const enemie of enemiesVet){
-          if(detectCollisionCubes(airPlane, enemie)){
-            animation(enemie);
-              enemie.removeFromParent();
-              const indexEnemie = enemiesVet.indexOf(enemie)
-              enemiesVet.splice(indexEnemie, 1);
-              setEnemiesCounter();
-              setCanCreateEnemie();
-            
-              animation(airPlane);
-              airPlane.position.set(0.0, 3.0, 45);
-              airPlane.material.opacity = 1.0;
-        }
+  for (const enemy of enemiesVet){
+    if(detectCollisionCubes(airPlane, enemy)){
+      removeAllEnemies(enemiesVet);
+      airPlane.position.set(0.0, 4.0, 45);
+      return;
     }
+  }
+}
+
+function removeAllEnemies(enemiesVet) {
+  for(const enemy of enemiesVet) {
+    enemy.removeFromParent();
+    enemiesVet.unshift();
+    setEnemiesCounter();
+  }
+  setCanCreateEnemy();
 }
 
 export function shotColisions(shotVet, enemiesVet){
-      for(const enemie of enemiesVet){
-          for(const shot of shotVet){
-              if(detectCollisionCubes(shot, enemie)){
-                animation(enemie);
-                enemie.removeFromParent();
-                const indexEnemie = enemiesVet.indexOf(enemie)
-                enemiesVet.splice(indexEnemie, 1);
-                setEnemiesCounter();
-                setCanCreateEnemie();
+  for(const enemy of enemiesVet){
+    for(const shot of shotVet){
+      if(detectCollisionCubes(shot, enemy)){
+        const indexEnemy = enemiesVet.indexOf(enemy)
+        enemiesVet.splice(indexEnemy, 1);
+        deadEnemies.push(enemy);
 
-                shot.removeFromParent();
-                const indexShot = shotVet.indexOf(shot)
-                shotVet.splice(indexShot, 1);
-                setShotCounter();
-                setCanCreateShot();
-            }
-        }
+        setEnemiesCounter();
+        setCanCreateEnemy();
+
+        shot.removeFromParent();
+        const indexShot = shotVet.indexOf(shot)
+        shotVet.splice(indexShot, 1);
+        setShotCounter();
+        setCanCreateShot();
+      }
     }
+  }
+}
+
+export function animateDeadEnemies() {
+  for(const enemy of deadEnemies) {
+    enemy.rotateY(3.14/12);
+    const scaleValue = enemy.scale.x - 0.1;
+    enemy.scale.set(scaleValue, scaleValue, scaleValue); 
+    if(enemy.scale.x <= 0)
+      enemy.removeFromParent();
+  }
 }
 
 function animation(obj){
-    setTimeout(() => {
-        obj.material.opacity =0.7;
-    }, 1000);
+  setTimeout(() => {
+    obj.material.opacity =0.7;
+  }, 1000);
 
-    setTimeout(() => {
-        obj.material.opacity =0.4;
-    }, 1000);
+  setTimeout(() => {
+      obj.material.opacity =0.4;
+  }, 1000);
 
-    setTimeout(() => {
-        obj.material.opacity =0.1;
-    }, 1000);
+  setTimeout(() => {
+      obj.material.opacity =0.1;
+  }, 1000);
 }

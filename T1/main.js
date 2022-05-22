@@ -1,8 +1,8 @@
 import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
-import { detectCollisionCubes, airPlaneColisions, shotColisions } from './colision.js';
+import { detectCollisionCubes, airPlaneColisions, shotColisions, animateDeadEnemies } from './colision.js';
 import {buildShot, inicializeKeyboard, keyboardUpdate, moveShot} from './playerLogic.js'
-import { createEnemy, enemiesOnScreen} from './enemiesLogic.js';
+import { createEnemy, enemiesOnScreen, enemiesOnScreenCounter } from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
 import {initRenderer,
        initCamera,
@@ -22,11 +22,11 @@ plane.translateY(100);
 scene.add(plane);
  
 // create a airPlane ------------------------------------------------------------------------------------------------------------
-var airPlaneGeometry = new THREE.ConeGeometry(2, 5, 20);
+var airPlaneGeometry = new THREE.ConeGeometry(4, 8, 20);
 var airPlaneMaterial = new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"});
 var airPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
  
-airPlane.position.set(0.0, 3.0, 45);
+airPlane.position.set(0.0, 4, 45);
 airPlane.rotateX(-3.14/2);
 
 scene.add(airPlane);
@@ -62,6 +62,8 @@ function render()
  shotColisions(shotOnScreen, enemiesOnScreen);
  
  moveShot(shotOnScreen);
+ 
+ animateDeadEnemies();
 }
 
 // plane functions ----------------------------------------------------------------------------------------------------------------
@@ -101,14 +103,3 @@ function worldMovement() {
     scene.add(plane);
   }
 }
-
-
-
-
-//  planoAux.translateY(120);
-//  scene.add(planoAux);
-//  plane.removeFromParent();
-//  planoAux.translateY(-0.1);
-//  plane.copy(planoAux);
-//  scene.add(plane);
-//  planoAux.removeFromParent();
