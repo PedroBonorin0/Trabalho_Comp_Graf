@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import { setCanCreateEnemy, setEnemiesCounter } from './enemiesLogic.js';
+import { setCanCreateEnemy, setEnemiesCounter, resetEnemies } from './enemiesLogic.js';
 import { setCanCreateShot, setShotCounter } from './playerLogic.js';
 
 var deadEnemies = [];
@@ -28,12 +28,6 @@ export function detectCollisionCubes(object1, object2){
 export function airPlaneColisions(airPlane, enemiesVet){
   for (const enemy of enemiesVet){
     if(detectCollisionCubes(airPlane, enemy)){
-      //const indexEnemy = enemiesVet.indexOf(enemy)
-      //enemiesVet.splice(indexEnemy, 1);
-      //deadEnemies.push(enemy);
-
-      //setEnemiesCounter();
-      //setCanCreateEnemy(true);
       removeAllEnemies(enemiesVet);
 
       airPlane.position.set(0.0, 4.0, 45);
@@ -45,10 +39,9 @@ export function airPlaneColisions(airPlane, enemiesVet){
 function removeAllEnemies(enemiesVet) {
   for(const enemy of enemiesVet) {
     enemy.removeFromParent();
-    enemiesVet.unshift();
-    setEnemiesCounter();
   }
-  setCanCreateEnemy(true);
+  resetEnemies();
+  // resetShots(); AQUI!!
 }
 
 export function shotColisions(shotVet, enemiesVet){

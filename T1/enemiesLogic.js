@@ -59,8 +59,13 @@ export function setCanCreateEnemy(condition){
   canCreate = condition;
 }
 
-export function setEnemiesCounter(){
+export function setEnemiesCounter(){  
   enemiesOnScreenCounter--;
+}
+
+export function resetEnemies () {
+  enemiesOnScreen = [];
+  enemiesOnScreenCounter = 0;
 }
 
 export {

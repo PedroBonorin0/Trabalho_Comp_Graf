@@ -20,7 +20,7 @@ export function buildShot(scene, player){
 
        setTimeout(() => {
            canCreateShot = true;
-       }, 200);
+       }, 250);
        return newShot;
    }
 }
