@@ -28,13 +28,14 @@ export function detectCollisionCubes(object1, object2){
 export function airPlaneColisions(airPlane, enemiesVet){
   for (const enemy of enemiesVet){
     if(detectCollisionCubes(airPlane, enemy)){
-      const indexEnemy = enemiesVet.indexOf(enemy)
-      enemiesVet.splice(indexEnemy, 1);
-      deadEnemies.push(enemy);
+      //const indexEnemy = enemiesVet.indexOf(enemy)
+      //enemiesVet.splice(indexEnemy, 1);
+      //deadEnemies.push(enemy);
 
-      setEnemiesCounter();
-      setCanCreateEnemy(true);
-      
+      //setEnemiesCounter();
+      //setCanCreateEnemy(true);
+      removeAllEnemies(enemiesVet);
+
       airPlane.position.set(0.0, 4.0, 45);
       return;
     }
