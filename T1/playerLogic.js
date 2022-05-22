@@ -70,3 +70,8 @@ export function setCanCreateShot(){
 export function setShotCounter(){
     shotOnScreenCounter--;
 }
+
+export function resetShots (vetShot) {
+    vetShot = [];
+    shotOnScreenCounter = 0;
+  }

@@ -58,7 +58,7 @@ function render()
    }
  }
 
- airPlaneColisions(airPlane, enemiesOnScreen);
+ airPlaneColisions(airPlane, enemiesOnScreen, shotOnScreen);
  shotColisions(shotOnScreen, enemiesOnScreen);
  
  moveShot(shotOnScreen);
