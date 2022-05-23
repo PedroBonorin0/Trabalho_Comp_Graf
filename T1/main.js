@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
-import { detectCollisionCubes, airPlaneColisions, shotColisions, animateDeadEnemies } from './colision.js';
+import { detectCollisionCubes, airPlaneColisions, shotColisions, animateDeadEnemies, animateDeadPlayer } from './colision.js';
 import {buildShot, inicializeKeyboard, keyboardUpdate, moveShot} from './playerLogic.js'
 import { createEnemy, enemiesOnScreen, enemiesOnScreenCounter } from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
@@ -64,6 +64,7 @@ function render()
  moveShot(shotOnScreen);
  
  animateDeadEnemies();
+ animateDeadPlayer(airPlane);
 }
 
 // plane functions ----------------------------------------------------------------------------------------------------------------

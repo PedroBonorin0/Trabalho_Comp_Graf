@@ -3,6 +3,7 @@ import { setCanCreateEnemy, setEnemiesCounter, resetEnemies } from './enemiesLog
 import { setCanCreateShot, setShotCounter, resetShots } from './playerLogic.js';
 
 var deadEnemies = [];
+var deadPlayer = [];
 
 // auxiliar functions -----------------------------------------------------------------------------------------------------
 export function buildBoundingBox(obj){
@@ -31,7 +32,8 @@ export function airPlaneColisions(airPlane, enemiesVet, vetShot){
       removeAllEnemies(enemiesVet);
       removeAllShots(vetShot);
 
-      airPlane.position.set(0.0, 4.0, 45);
+      deadPlayer.push(airPlane);
+      //airPlane.position.set(0.0, 4.0, 45);
       return;
     }
   }
@@ -79,6 +81,22 @@ export function animateDeadEnemies() {
     enemy.scale.set(scaleValue, scaleValue, scaleValue); 
     if(enemy.scale.x <= 0)
       enemy.removeFromParent();
+  }
+}
+
+export function animateDeadPlayer(plane) {
+  var set = true;
+  for(const airPlane of deadPlayer) {
+    if(set){
+      airPlane.rotateZ(3.14/4);
+    }
+    setTimeout(() => {
+      set = false;
+      airPlane.updateMatrixWorld();
+      airPlane.position.set(0.0, 4, 45);
+      deadPlayer.shift();
+      return;
+  },440);
   }
 }
 
