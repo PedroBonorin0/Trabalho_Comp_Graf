@@ -2,21 +2,89 @@ import * as THREE from  'three';
 
 // inicialize elements -------------------------------------------------------------------------------------------------------------
 var enemiesOnScreenCounter = 0;
-var enemyMaterial = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"})
-var enemyGeometry = new THREE.BoxGeometry(12, 12, 12);
+var enemyMaterialAir = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"});
+var enemyMaterialGround = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 150)"});
+var enemyGeometryAir = new THREE.BoxGeometry(12, 12, 12);
+var enemyGeometryGround = new THREE.BoxGeometry(14, 10, 14);
 var canCreate = true;
+
+var scene;
+var airPlane;
 
 // create vet of enemies -----------------------------------------------------------------------------------------------------------
 var enemiesOnScreen = [];
 
+var airEnemiesShotsOnScreen = [];
+
 // enemies logic functions ---------------------------------------------------------------------------------------------------------
-export function createEnemy(scene) {
+export function createEnemy(scn,plane) {
+  scene = scn;
+  airPlane = plane;
+
+  onda1();
+
+  setTimeout(() => {
+    onda2();
+  }, 10000);
+
+  setTimeout(() => {
+    onda3();
+  }, 20000);
+
+  setTimeout(() => {
+    onda4();
+  }, 30000);
+
+  setTimeout(() => {
+    onda5();
+  }, 40000);
+
+  setTimeout(() => {
+    onda6();
+  }, 50000);
+
+  setTimeout(() => {
+    onda7();
+  }, 60000);
+
+  setTimeout(() => {
+    onda8();
+  }, 70000);
+
+  setTimeout(() => {
+    onda9();
+  }, 80000);
+
+  setTimeout(() => {
+    onda10();
+  }, 90000);
+
+
   if(enemiesOnScreenCounter < 10 && canCreate) {
+    // canCreate = false;
+    // var newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+
+    // enemiesOnScreen.push(newEnemy);
+    // newEnemy.speed = 0.5;
+
+    // newEnemy.position.set(generateRandomX(), 10, -350);
+    // scene.add(newEnemy);
+  
+    // enemiesOnScreenCounter++;
+    // setTimeout(() => {
+    //   canCreate = true;
+    // }, 1000);
+
     canCreate = false;
-    var newEnemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
+    var newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
 
     enemiesOnScreen.push(newEnemy);
     newEnemy.speed = generateRandomSpeed();
+    newEnemy.canShoot = false;
+
+    setTimeout(() => {
+      newEnemy.canShoot = true;
+    }, 2000);
 
     newEnemy.position.set(generateRandomX(), 36, -350);
     scene.add(newEnemy);
@@ -27,6 +95,7 @@ export function createEnemy(scene) {
     }, 1000);
   }
   moveEnemies();
+  moveAirEnemyShots();
 }
 
 function generateRandomX() {
@@ -36,6 +105,14 @@ function generateRandomX() {
 function moveEnemies() {
   for(const enemy of enemiesOnScreen) {
     enemy.translateZ(enemy.speed);
+    if(enemy.position.z < 0 && enemy.position.z > 8) {
+      // enemy.canShoot = false;
+      buildAirEnemyShot(enemy);
+      // setTimeout(() => {
+      //   enemy.canShoot = true;
+      // }, 1250);
+    }
+
     if(enemy.position.z > 110) {
       enemy.removeFromParent();
       const indexToRemove = enemiesOnScreen.indexOf(enemy);
@@ -43,6 +120,41 @@ function moveEnemies() {
       enemiesOnScreenCounter--;
     }
   }
+}
+
+function buildAirEnemyShot(enemy) {
+  var newShot = new THREE.Mesh(
+    new THREE.SphereGeometry(0.8, 10, 10),
+    new THREE.MeshLambertMaterial({color: "rgb(0, 100, 100)"})
+  );
+
+  newShot.position.set(enemy.position.x, enemy.position.y, enemy.position.z);
+  calculaRotacao(newShot);
+
+  scene.add(newShot);
+}
+
+function moveAirEnemyShots() {
+  for(const shot of airEnemiesShotsOnScreen) {
+    shot.translateZ(0.2);
+    
+    if(shot.position.z > 110) {
+      shot.removeFromParent();
+      const indexToRemove = airEnemiesShotsOnScreen.indexOf(shot);
+      airEnemiesShotsOnScreen.splice(indexToRemove, 1);
+    }
+  }
+}
+
+function calculaRotacao(newShot) {
+//   var distance = Math.sqrt(Math.pow(newEnemy.position.x - airPlane.position.x, 2) +
+//                            Math.pow(newEnemy.position.z - airPlane.position.z, 2));
+
+//   var rotateAngle = (newEnemy.position.x - airPlane.position.x)/distance;
+//   var angleRad = degreesToRadians(rotateAngle);
+
+//   newEnemy.rotateY(angleRad);
+  newShot.lookAt(airPlane);
 }
 
 // auxiliar functions --------------------------------------------------------------------------------------------------------------
@@ -61,6 +173,48 @@ export function setEnemiesCounter(){
 export function resetEnemies () {
   enemiesOnScreen = [];
   enemiesOnScreenCounter = 0;
+}
+
+// ONDAS
+
+function onda1() {
+  
+}
+
+function onda2() {
+
+}
+
+function onda3() {
+
+}
+
+function onda4() {
+
+}
+
+function onda5() {
+
+}
+
+function onda6() {
+
+}
+
+function onda7() {
+
+}
+
+function onda8() {
+
+}
+
+function onda9() {
+
+}
+
+function onda10() {
+
 }
 
 export {

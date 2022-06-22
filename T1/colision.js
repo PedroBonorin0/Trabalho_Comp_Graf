@@ -84,7 +84,7 @@ export function animateDeadEnemies() {
   }
 }
 
-export function animateDeadPlayer(plane) {
+export function animateDeadPlayer() {
   var set = true;
   for(const airPlane of deadPlayer) {
     if(set){
@@ -98,18 +98,4 @@ export function animateDeadPlayer(plane) {
       return;
   },440);
   }
-}
-
-function animation(obj){
-  setTimeout(() => {
-    obj.material.opacity =0.7;
-  }, 1000);
-
-  setTimeout(() => {
-      obj.material.opacity =0.4;
-  }, 1000);
-
-  setTimeout(() => {
-      obj.material.opacity =0.1;
-  }, 1000);
 }
