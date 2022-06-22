@@ -13,11 +13,16 @@ import {initRenderer,
 // Inicialização de elelmentos -------------------------------------------------------------------------------------------------- 
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
-var camera = initCamera(new THREE.Vector3(0, 60, 100)); // Init camera in this position
+var camera = initCamera(new THREE.Vector3(0, 100, 140)); // Init camera in this position
 initDefaultBasicLight(scene);
- 
+
+// Variáveis Gerais
+let posicaoSomePlano = -8E-14;
+let posicaoCriaPlano = 2E-14;
+let velocidadePlano = -0.5;
+
 // create the ground plane ------------------------------------------------------------------------------------------------------
-let plane = createGroundPlaneWired(500, 500);
+let plane = generatePlano();
 plane.translateY(100);
 scene.add(plane);
  
@@ -25,8 +30,8 @@ scene.add(plane);
 var airPlaneGeometry = new THREE.ConeGeometry(4, 8, 20);
 var airPlaneMaterial = new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"});
 var airPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
- 
-airPlane.position.set(0.0, 4, 45);
+
+airPlane.position.set(0.0, 36, 80);
 airPlane.rotateX(-3.14/2);
 
 scene.add(airPlane);
@@ -53,9 +58,7 @@ function render()
  
  if(keyboard.pressed("space") || keyboard.pressed("ctrl")){
    var shot = buildShot(scene, airPlane);
-   if(shot){
-     shotOnScreen.push(shot);
-   }
+   if(shot) shotOnScreen.push(shot);
  }
 
  airPlaneColisions(airPlane, enemiesOnScreen, shotOnScreen);
@@ -74,33 +77,37 @@ var planoAux = null;
 
 function worldMovement() {
   if(plane)
-    plane.translateY(-0.5);
+    plane.translateY(velocidadePlano);
   if(planoAux)
-    planoAux.translateY(-0.5);
+    planoAux.translateY(velocidadePlano);
 
-  if(plane && plane.position.y < -7E-14) {
+  if(plane && plane.position.y < posicaoSomePlano) {
     plane.removeFromParent();
     plane = null;
     criaPlano = true;
   }
 
-  if(planoAux && planoAux.position.y < -7E-14) {
+  if(planoAux && planoAux.position.y < posicaoSomePlano) {
     planoAux.removeFromParent();
     planoAux = null;
     criaPlanoAux = true;
   }
     
-  if(criaPlanoAux && plane && plane.position.y < 2E-14) {
+  if(criaPlanoAux && plane && plane.position.y < posicaoCriaPlano) {
    criaPlanoAux = false;
-   planoAux = createGroundPlaneWired(500, 500);
+   planoAux = generatePlano();
    planoAux.translateY(590);
    scene.add(planoAux);
   }
   
-  if(criaPlano && planoAux && planoAux.position.y < 2E-14) {
+  if(criaPlano && planoAux && planoAux.position.y < posicaoCriaPlano) {
     criaPlano = false;
-    plane = createGroundPlaneWired(500, 500);
+    plane = generatePlano();
     plane.translateY(590);
     scene.add(plane);
   }
+}
+
+function generatePlano() {
+  return createGroundPlaneWired(500, 500);
 }

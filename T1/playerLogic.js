@@ -45,20 +45,16 @@ export function inicializeKeyboard(){
 export function keyboardUpdate(kb, obj){
    kb.update();
    if (kb.pressed("up") && obj.position.y < 4.22){
-       console.log(obj.position.y)
        obj.translateY(2);
    }
    if (kb.pressed("down") && obj.position.y > 3.994){
        obj.translateY(-2);
-       console.log(obj.position.y)
    }
    if (kb.pressed("right") && obj.position.x < 57){
        obj.translateX(2);
-       console.log(obj.position.x)
    }
    if (kb.pressed("left") && obj.position.x > -57){
        obj.translateX(-2);
-       console.log(obj.position.x)
    }
 }
 

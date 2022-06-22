@@ -93,7 +93,7 @@ export function animateDeadPlayer(plane) {
     setTimeout(() => {
       set = false;
       airPlane.updateMatrixWorld();
-      airPlane.position.set(0.0, 4, 45);
+      airPlane.position.set(0.0, 36, 80);
       deadPlayer.shift();
       return;
   },440);

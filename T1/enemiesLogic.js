@@ -3,7 +3,7 @@ import * as THREE from  'three';
 // inicialize elements -------------------------------------------------------------------------------------------------------------
 var enemiesOnScreenCounter = 0;
 var enemyMaterial = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"})
-var enemyGeometry = new THREE.BoxGeometry(14, 14, 14);
+var enemyGeometry = new THREE.BoxGeometry(12, 12, 12);
 var canCreate = true;
 
 // create vet of enemies -----------------------------------------------------------------------------------------------------------
@@ -14,12 +14,11 @@ export function createEnemy(scene) {
   if(enemiesOnScreenCounter < 10 && canCreate) {
     canCreate = false;
     var newEnemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
-    newEnemy.uniqueId = generateUniqueId();
 
     enemiesOnScreen.push(newEnemy);
     newEnemy.speed = generateRandomSpeed();
 
-    newEnemy.position.set(generateRandomX(), 3, -350);
+    newEnemy.position.set(generateRandomX(), 36, -350);
     scene.add(newEnemy);
   
     enemiesOnScreenCounter++;
@@ -37,7 +36,7 @@ function generateRandomX() {
 function moveEnemies() {
   for(const enemy of enemiesOnScreen) {
     enemy.translateZ(enemy.speed);
-    if(enemy.position.z > 90) {
+    if(enemy.position.z > 110) {
       enemy.removeFromParent();
       const indexToRemove = enemiesOnScreen.indexOf(enemy);
       enemiesOnScreen.splice(indexToRemove, 1);
@@ -49,10 +48,6 @@ function moveEnemies() {
 // auxiliar functions --------------------------------------------------------------------------------------------------------------
 function generateRandomSpeed() {
   return Math.random() * (2 - (0.5)) + (0.5);
-}
-
-function generateUniqueId() {
-  return new Date().getTime() 
 }
 
 export function setCanCreateEnemy(condition){
