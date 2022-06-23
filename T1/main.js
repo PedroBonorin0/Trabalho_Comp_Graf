@@ -2,7 +2,7 @@ import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
 import { detectCollisionCubes, airPlaneColisions, shotColisions, animateDeadEnemies, animateDeadPlayer, deadPlayer} from './colision.js';
 import {buildShot, inicializeKeyboard, keyboardUpdate, moveShot} from './playerLogic.js'
-import { createEnemy, enemiesOnScreen } from './enemiesLogic.js';
+import { createEnemy, enemiesOnScreen, buildAirEnemyShot, moveAirEnemyShots, airEnemiesShotsOnScreen } from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
 import { createLight, hideLights } from './ilumination.js';
 import {initRenderer,
@@ -69,6 +69,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 
 // create vet of shots -----------------------------------------------------------------------------------------------------------
 var shotOnScreen = [];
+var airEnemiesShot = [];
 
 
 var game = true; // Habilita o comeco do jogo 
@@ -91,6 +92,12 @@ function render()
    var shot = buildShot(scene, airPlane);
    if(shot) shotOnScreen.push(shot);
  }
+
+ for(const enemy of enemiesOnScreen){
+  buildAirEnemyShot(scene, enemy, airPlane);
+ }
+
+ moveAirEnemyShots();
 
  createEnemy(scene, airPlane);
 

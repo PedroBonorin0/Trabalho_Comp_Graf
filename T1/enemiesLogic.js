@@ -11,6 +11,9 @@ var canCreate = true;
 var scene;
 var airPlane;
 
+var airShotOnScreenCounter = 0;
+var canCreateAirShot = true;
+
 // create vet of enemies -----------------------------------------------------------------------------------------------------------
 var enemiesOnScreen = [];
 
@@ -122,39 +125,38 @@ function moveEnemies() {
   }
 }
 
-function buildAirEnemyShot(enemy) {
-  var newShot = new THREE.Mesh(
-    new THREE.SphereGeometry(0.8, 10, 10),
-    new THREE.MeshLambertMaterial({color: "rgb(0, 100, 100)"})
-  );
+export function buildAirEnemyShot(scene, enemy, airPlane) {
+  if(airShotOnScreenCounter < 20 && canCreateAirShot) {
+    canCreateAirShot = false;
+    var newShot = new THREE.Mesh(
+        new THREE.SphereGeometry(0.8, 10, 10),
+        new THREE.MeshLambertMaterial({color: "rgb(255, 0, 0)"})
+    );
 
-  newShot.position.set(enemy.position.x, enemy.position.y, enemy.position.z);
-  calculaRotacao(newShot);
+    newShot.position.set(enemy.position.x, enemy.position.y, enemy.position.z);
+    newShot.lookAt(airPlane.position);
+    console.log(newShot.lookAt)
+    scene.add(newShot);
+    airShotOnScreenCounter++;
+    airEnemiesShotsOnScreen.push(newShot);
 
-  scene.add(newShot);
-}
-
-function moveAirEnemyShots() {
-  for(const shot of airEnemiesShotsOnScreen) {
-    shot.translateZ(0.2);
-    
-    if(shot.position.z > 110) {
-      shot.removeFromParent();
-      const indexToRemove = airEnemiesShotsOnScreen.indexOf(shot);
-      airEnemiesShotsOnScreen.splice(indexToRemove, 1);
-    }
+    setTimeout(() => {
+        canCreateAirShot = true;
+    }, 500);
+    return newShot;
   }
 }
 
-function calculaRotacao(newShot) {
-//   var distance = Math.sqrt(Math.pow(newEnemy.position.x - airPlane.position.x, 2) +
-//                            Math.pow(newEnemy.position.z - airPlane.position.z, 2));
-
-//   var rotateAngle = (newEnemy.position.x - airPlane.position.x)/distance;
-//   var angleRad = degreesToRadians(rotateAngle);
-
-//   newEnemy.rotateY(angleRad);
-  newShot.lookAt(airPlane);
+export function moveAirEnemyShots() {
+  for(const shot of airEnemiesShotsOnScreen) {
+    shot.translateZ(1.2);
+    if(shot.position.z < 34) { 
+      shot.removeFromParent();
+      const indexToRemove = airEnemiesShotsOnScreen.indexOf(shot);
+      airEnemiesShotsOnScreen.splice(indexToRemove, 1);
+      airShotOnScreenCounter--;
+    }
+  }
 }
 
 // auxiliar functions --------------------------------------------------------------------------------------------------------------
@@ -402,3 +404,7 @@ export {
 // function generateRandomEnemyPattern() {
 //   return Math.floor(Math.random() * (7.9 - (1)) + (1));
 // }
+
+export {
+  airEnemiesShotsOnScreen,
+}
