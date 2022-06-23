@@ -4,6 +4,7 @@ import { detectCollisionCubes, airPlaneColisions, shotColisions, animateDeadEnem
 import {buildShot, inicializeKeyboard, keyboardUpdate, moveShot} from './playerLogic.js'
 import { createEnemy, enemiesOnScreen } from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
+import { createLight, hideLights } from './ilumination.js';
 import {initRenderer,
        initCamera,
        initDefaultBasicLight,
@@ -12,9 +13,20 @@ import {initRenderer,
 
 // Inicialização de elelmentos -------------------------------------------------------------------------------------------------- 
 var scene = new THREE.Scene();    // Create main scene
-var renderer = initRenderer();    // View function in util/utils
+
+var props = (typeof additionalProperties !== 'undefined' && additionalProperties) ? additionalProperties : {};
+var renderer = new THREE.WebGLRenderer(props);
+renderer.shadowMap.enabled = true;
+renderer.shadowMapSoft = true;
+renderer.shadowMap.type = THREE.VSMShadowMap;
+
+renderer.setClearColor(new THREE.Color("rgb(0, 0, 0)"));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.getElementById("webgl-output").appendChild(renderer.domElement);
+
 var camera = initCamera(new THREE.Vector3(0, 100, 140)); // Init camera in this position
-initDefaultBasicLight(scene);
+//initDefaultBasicLight(scene);
 
 // Variáveis Gerais
 let posicaoSomePlano = -8E-14;
@@ -24,6 +36,7 @@ let velocidadePlano = -0.5;
 // create the ground plane ------------------------------------------------------------------------------------------------------
 let plane = generatePlano();
 plane.translateY(100);
+plane.receiveShadow = true;
 scene.add(plane);
  
 // create a airPlane ------------------------------------------------------------------------------------------------------------
@@ -33,6 +46,8 @@ var airPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
 
 airPlane.position.set(0.0, 36, 80);
 airPlane.rotateX(-3.14/2);
+//airPlane.receiveShadow = true;
+airPlane.castShadow = true;
 
 var deadAirPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
  
@@ -40,6 +55,11 @@ deadAirPlane.position.set(0.0, 36, 80);
 deadAirPlane.rotateX(-3.14/2);
 
 scene.add(airPlane);
+
+// create a directional light ----------------------------------------------------------------------------------------------------
+var dirLight = createLight(scene);
+//scene.add(dirLight);
+//hideLights(dirLight);
  
 // create a keyboard -------------------------------------------------------------------------------------------------------------
 var keyboard = inicializeKeyboard();
@@ -71,6 +91,8 @@ function render()
    var shot = buildShot(scene, airPlane);
    if(shot) shotOnScreen.push(shot);
  }
+
+ createEnemy(scene, airPlane);
 
  airPlaneColisions(scene, airPlane, deadAirPlane, enemiesOnScreen, shotOnScreen);
  shotColisions(shotOnScreen, enemiesOnScreen);

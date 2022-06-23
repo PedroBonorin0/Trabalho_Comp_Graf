@@ -95,7 +95,7 @@ export function createEnemy(scn,plane) {
     }, 1000);
   }
   moveEnemies();
-  moveAirEnemyShots();
+  //moveAirEnemyShots();
 }
 
 function generateRandomX() {
