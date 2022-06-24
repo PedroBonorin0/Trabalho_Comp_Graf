@@ -40,6 +40,17 @@ deadAirPlane.position.set(0.0, 36, 80);
 deadAirPlane.rotateX(-3.14/2);
 
 scene.add(airPlane);
+
+// create a cylinder 1 -----------------------------------------------------------------------------------------------------------
+var cylinder = new THREE.Mesh(
+  new THREE.CylinderGeometry( 1, 8, 0.1, 20 ));
+
+// create a corte 1 -----------------------------------------------------------------------------------------------------------
+var plane1 = new THREE.Mesh(new THREE.PlaneGeometry( 7,7 ));
+
+// create a corte 2 -----------------------------------------------------------------------------------------------------------
+var plane2 = new THREE.Mesh(new THREE.PlaneGeometry( 7,7 ));
+
  
 // create a keyboard -------------------------------------------------------------------------------------------------------------
 var keyboard = inicializeKeyboard();
