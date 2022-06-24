@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
-import { detectCollisionCubes, airPlaneColisions, shotColisions, animateDeadEnemies, animateDeadPlayer } from './colision.js';
+import { detectCollisionCubes, airPlaneColisions, shotColisions, animateDeadEnemies, animateDeadPlayer, deadPlayer} from './colision.js';
 import {buildShot, inicializeKeyboard, keyboardUpdate, moveShot} from './playerLogic.js'
 import { createEnemy, enemiesOnScreen, moveEnemies } from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
@@ -34,6 +34,11 @@ var airPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
 airPlane.position.set(0.0, 36, 80);
 airPlane.rotateX(-3.14/2);
 
+var deadAirPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
+ 
+deadAirPlane.position.set(0.0, 36, 80);
+deadAirPlane.rotateX(-3.14/2);
+
 scene.add(airPlane);
  
 // create a keyboard -------------------------------------------------------------------------------------------------------------
@@ -45,9 +50,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 // create vet of shots -----------------------------------------------------------------------------------------------------------
 var shotOnScreen = [];
 
-
-var game = true; // Habilita o comeco do jogo 
-var running = false; // Verifica se o jogo está em andamento
+var game = true; // Habilita o comeco do jogo
 
 // render ------------------------------------------------------------------------------------------------------------------------
 render();
@@ -55,11 +58,10 @@ function render()
 {
   if(game) {
     game = false;
-    running = true;
     iniciaGame();
   }
 
-  if(!running) return;
+  moveEnemies();
 
   keyboardUpdate(keyboard, airPlane);
   worldMovement();
@@ -71,13 +73,13 @@ function render()
     if(shot) shotOnScreen.push(shot);
   }
 
-  airPlaneColisions(airPlane, enemiesOnScreen, shotOnScreen);
-  shotColisions(shotOnScreen, enemiesOnScreen);
-  
-  moveShot(shotOnScreen);
-  
-  animateDeadEnemies();
-  animateDeadPlayer(airPlane);
+ game = airPlaneColisions(scene, airPlane, deadAirPlane, enemiesOnScreen, shotOnScreen);
+ shotColisions(shotOnScreen, enemiesOnScreen);
+ 
+ moveShot(shotOnScreen);
+ 
+ animateDeadEnemies();
+ animateDeadPlayer(scene, airPlane);
 }
 
 // plane functions ----------------------------------------------------------------------------------------------------------------
@@ -86,7 +88,6 @@ var criaPlanoAux = true;
 var planoAux = null;
 
 function worldMovement() {
-  moveEnemies();
   if(plane)
     plane.translateY(velocidadePlano);
   if(planoAux)

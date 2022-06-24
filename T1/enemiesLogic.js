@@ -59,7 +59,6 @@ export function createEnemy(scn,plane) {
     onda10();
   }, 90000);
 
-
   // if(enemiesOnScreenCounter < 10 && canCreate) {
     // canCreate = false;
     // var newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
@@ -97,13 +96,10 @@ export function createEnemy(scn,plane) {
   // moveAirEnemyShots();
 }
 
-function generateRandomX() {
-  return Math.floor(Math.random() * (57 - (-57)) ) + (-57);
-}
-
 export function moveEnemies() {
   for(const enemy of enemiesOnScreen) {
-    enemy.translateZ(enemy.speed);
+    enemy.translateX(enemy.speedX);
+    enemy.translateZ(enemy.speedZ);
     
     if(enemy.position.z > 110) {
       enemy.removeFromParent();
@@ -157,11 +153,6 @@ function calculaRotacao(newShot) {
   newShot.lookAt(airPlane);
 }
 
-// auxiliar functions --------------------------------------------------------------------------------------------------------------
-function generateRandomSpeed() {
-  return Math.random() * (2 - (0.5)) + (0.5);
-}
-
 export function setCanCreateEnemy(condition){
   canCreate = condition;
 }
@@ -175,49 +166,126 @@ export function resetEnemies () {
   enemiesOnScreenCounter = 0;
 }
 
-function generateEnemy(type, position) {
+function generateEnemyVertical(type, x, z) {
   var newEnemy;
   if(type === 'air') {
     newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
-    newEnemy.speed = 0.5;
+    newEnemy.speedX = 0;
+    newEnemy.speedZ = 1;
+    newEnemy.position.set(x, 36, z);
   } else {
     newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
-    newEnemy.speed = 1;
+    newEnemy.speedX = 0;
+    newEnemy.speedZ = 0.5;
+    newEnemy.position.set(x, 10, z);
   }
-  
-  newEnemy.position.set(position);
   
   enemiesOnScreen.push(newEnemy);
   enemiesOnScreenCounter++;
-
+  
   scene.add(newEnemy);
 }
 
-function wait(milliseconds){
-  var start = new Date().getTime();
-  var end=0;
-  while( (end-start) < milliseconds){
-      end = new Date().getTime();
+function generateEnemyHorizontal(type, x, z, side) {
+  var newEnemy;
+  if(type === 'air') {
+    newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+
+    if(side === 'dir')
+      newEnemy.speedX = -1;
+    else
+      newEnemy.speedX = 1;
+
+    newEnemy.speedZ = 0;
+    newEnemy.position.set(x, 36, z);
+  } else {
+    newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+
+    if(side === 'dir')
+      newEnemy.speedX = -0.5;
+    else
+      newEnemy.speedX = 0.5;
+
+    newEnemy.speedZ = 0;
+    newEnemy.position.set(x, 10, z);
   }
+  
+  enemiesOnScreen.push(newEnemy);
+  enemiesOnScreenCounter++;
+  
+  scene.add(newEnemy);
 }
+
+function generateEnemyDiagonal(type, x, z) {
+  // MODIFICAR
+  var newEnemy;
+  if(type === 'air') {
+    newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+    newEnemy.speedX = 0.5;
+    newEnemy.speedZ = 1;
+    newEnemy.position.set(x, 36, z);
+  } else {
+    newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+    newEnemy.speedX = 0.25;
+    newEnemy.speedZ = 0.5;
+    newEnemy.position.set(x, 10, z);
+  }
+  
+  enemiesOnScreen.push(newEnemy);
+  enemiesOnScreenCounter++;
+  
+  scene.add(newEnemy);
+}
+
+// function generateEnemyArco(type, x, z) {
+//   var newEnemy;
+//   if(type === 'air') {
+//     newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+//     newEnemy.speedX = 0;
+//     newEnemy.speedZ = 1;
+//     newEnemy.position.set(x, 36, z);
+//   } else {
+//     newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+//     newEnemy.speedX = 0;
+//     newEnemy.speedZ = 0.5;
+//     newEnemy.position.set(x, 10, z);
+//   }
+  
+//   enemiesOnScreen.push(newEnemy);
+//   enemiesOnScreenCounter++;
+  
+//   scene.add(newEnemy);
+// }
 
 // ONDAS
 
 function onda1() {
-  console.log('passou');
-  generateEnemy('air', (-20, 36, -350));
-  wait(500);
-  generateEnemy('air', (-10, 36, -350));
-  wait(500);
-  generateEnemy('air', (0, 36, -350));
-  wait(500);
-  generateEnemy('air', (10, 36, -350));
-  wait(500);
-  generateEnemy('air', (20, 36, -350));
+  generateEnemyVertical('air', -45, -250);
+  
+  generateEnemyVertical('air', -20, -300);
+  
+  generateEnemyVertical('air', 0, -350);
+  
+  generateEnemyVertical('air', 20, -400);
+
+  generateEnemyVertical('air', 45, -450);
+  
+  generateEnemyVertical('grd', -30, -300);
+  generateEnemyVertical('grd', 30, -300);
+
+  setTimeout(() => {
+    generateEnemyHorizontal('air', -340, 30, 'esq');
+    generateEnemyHorizontal('air', -290, 0, 'esq');
+
+    setTimeout(() => {
+      generateEnemyHorizontal('air', 340, -70, 'dir');
+      generateEnemyHorizontal('air', 290, -45, 'dir');
+    }, 2000);
+  }, 5500);
 }
 
 function onda2() {
-
+  // onda1();
 }
 
 function onda3() {

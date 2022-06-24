@@ -5,6 +5,8 @@ import { setCanCreateShot, setShotCounter, resetShots } from './playerLogic.js';
 var deadEnemies = [];
 var deadPlayer = [];
 
+var set = false;
+
 // auxiliar functions -----------------------------------------------------------------------------------------------------
 export function buildBoundingBox(obj){
     return new THREE.BoxHelper(obj, 0x00ff00);
@@ -26,16 +28,23 @@ export function detectCollisionCubes(object1, object2){
   }
 
 // detect colisions functions -------------------------------------------------------------------------------------------
-export function airPlaneColisions(airPlane, enemiesVet, vetShot){
+export function airPlaneColisions(scene, airPlane, deadAirPlane, enemiesVet, vetShot){
   for (const enemy of enemiesVet){
     if(detectCollisionCubes(airPlane, enemy)){
       removeAllEnemies(enemiesVet);
       removeAllShots(vetShot);
+      deadAirPlane.position.set(airPlane.position.x, airPlane.position.y, airPlane.position.z);
+      airPlane.removeFromParent();
+      deadPlayer.push(deadAirPlane);
+      set = true;
+      setTimeout(() => {
+        airPlane.position.set(0.0, 36, 80);
+        scene.add(airPlane);
+      },440);
 
-      deadPlayer.push(airPlane);
-      //airPlane.position.set(0.0, 4.0, 45);
-      return;
+      return true;
     }
+    return false;
   }
 }
 
@@ -84,18 +93,21 @@ export function animateDeadEnemies() {
   }
 }
 
-export function animateDeadPlayer() {
-  var set = true;
+export function animateDeadPlayer(scene, plane) {
   for(const airPlane of deadPlayer) {
     if(set){
+      scene.add(airPlane);
       airPlane.rotateZ(3.14/4);
+      setTimeout(() => {
+        set = false;
+        airPlane.removeFromParent();
+        deadPlayer.shift();
+        return;
+      },440);
     }
-    setTimeout(() => {
-      set = false;
-      airPlane.updateMatrixWorld();
-      airPlane.position.set(0.0, 36, 80);
-      deadPlayer.shift();
-      return;
-  },440);
   }
+}
+
+export {
+  deadPlayer,
 }

@@ -44,10 +44,10 @@ export function inicializeKeyboard(){
 
 export function keyboardUpdate(kb, obj){
    kb.update();
-   if (kb.pressed("up") && obj.position.y < 4.22){
+   if (kb.pressed("up") && obj.position.y < 36.16){
        obj.translateY(2);
    }
-   if (kb.pressed("down") && obj.position.y > 3.994){
+   if (kb.pressed("down") && obj.position.y > 35.992){
        obj.translateY(-2);
    }
    if (kb.pressed("right") && obj.position.x < 57){
