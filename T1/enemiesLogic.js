@@ -60,7 +60,7 @@ export function createEnemy(scn,plane) {
   }, 90000);
 
 
-  if(enemiesOnScreenCounter < 10 && canCreate) {
+  // if(enemiesOnScreenCounter < 10 && canCreate) {
     // canCreate = false;
     // var newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
 
@@ -75,50 +75,50 @@ export function createEnemy(scn,plane) {
     //   canCreate = true;
     // }, 1000);
 
-    canCreate = false;
-    var newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+    // canCreate = false;
+    // var newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
 
-    enemiesOnScreen.push(newEnemy);
-    newEnemy.speed = generateRandomSpeed();
-    newEnemy.canShoot = false;
+    // enemiesOnScreen.push(newEnemy);
+    // newEnemy.speed = generateRandomSpeed();
+    // newEnemy.canShoot = false;
 
-    setTimeout(() => {
-      newEnemy.canShoot = true;
-    }, 2000);
+    // setTimeout(() => {
+    //   newEnemy.canShoot = true;
+    // }, 2000);
 
-    newEnemy.position.set(generateRandomX(), 36, -350);
-    scene.add(newEnemy);
+    // newEnemy.position.set(generateRandomX(), 36, -350);
+    // scene.add(newEnemy);
   
-    enemiesOnScreenCounter++;
-    setTimeout(() => {
-      canCreate = true;
-    }, 1000);
-  }
-  moveEnemies();
-  moveAirEnemyShots();
+    // enemiesOnScreenCounter++;
+    // setTimeout(() => {
+    //   canCreate = true;
+    // }, 1000);
+  // }
+  // moveAirEnemyShots();
 }
 
 function generateRandomX() {
   return Math.floor(Math.random() * (57 - (-57)) ) + (-57);
 }
 
-function moveEnemies() {
+export function moveEnemies() {
   for(const enemy of enemiesOnScreen) {
     enemy.translateZ(enemy.speed);
-    if(enemy.position.z < 0 && enemy.position.z > 8) {
-      // enemy.canShoot = false;
-      buildAirEnemyShot(enemy);
-      // setTimeout(() => {
-      //   enemy.canShoot = true;
-      // }, 1250);
-    }
-
+    
     if(enemy.position.z > 110) {
       enemy.removeFromParent();
       const indexToRemove = enemiesOnScreen.indexOf(enemy);
       enemiesOnScreen.splice(indexToRemove, 1);
       enemiesOnScreenCounter--;
     }
+
+    // if(enemy.position.z < 0 && enemy.position.z > 8) {
+    //   enemy.canShoot = false;
+    //   buildAirEnemyShot(enemy);
+    //   setTimeout(() => {
+    //     enemy.canShoot = true;
+    //   }, 1250);
+    // }
   }
 }
 
@@ -175,10 +175,45 @@ export function resetEnemies () {
   enemiesOnScreenCounter = 0;
 }
 
+function generateEnemy(type, position) {
+  var newEnemy;
+  if(type === 'air') {
+    newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+    newEnemy.speed = 0.5;
+  } else {
+    newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+    newEnemy.speed = 1;
+  }
+  
+  newEnemy.position.set(position);
+  
+  enemiesOnScreen.push(newEnemy);
+  enemiesOnScreenCounter++;
+
+  scene.add(newEnemy);
+}
+
+function wait(milliseconds){
+  var start = new Date().getTime();
+  var end=0;
+  while( (end-start) < milliseconds){
+      end = new Date().getTime();
+  }
+}
+
 // ONDAS
 
 function onda1() {
-  
+  console.log('passou');
+  generateEnemy('air', (-20, 36, -350));
+  wait(500);
+  generateEnemy('air', (-10, 36, -350));
+  wait(500);
+  generateEnemy('air', (0, 36, -350));
+  wait(500);
+  generateEnemy('air', (10, 36, -350));
+  wait(500);
+  generateEnemy('air', (20, 36, -350));
 }
 
 function onda2() {

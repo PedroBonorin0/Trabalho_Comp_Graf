@@ -2,7 +2,7 @@ import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
 import { detectCollisionCubes, airPlaneColisions, shotColisions, animateDeadEnemies, animateDeadPlayer } from './colision.js';
 import {buildShot, inicializeKeyboard, keyboardUpdate, moveShot} from './playerLogic.js'
-import { createEnemy, enemiesOnScreen } from './enemiesLogic.js';
+import { createEnemy, enemiesOnScreen, moveEnemies } from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
 import {initRenderer,
        initCamera,
@@ -47,6 +47,7 @@ var shotOnScreen = [];
 
 
 var game = true; // Habilita o comeco do jogo 
+var running = false; // Verifica se o jogo está em andamento
 
 // render ------------------------------------------------------------------------------------------------------------------------
 render();
@@ -54,26 +55,29 @@ function render()
 {
   if(game) {
     game = false;
+    running = true;
     iniciaGame();
   }
 
- keyboardUpdate(keyboard, airPlane);
- worldMovement();
- requestAnimationFrame(render);
- renderer.render(scene, camera) // Render scene
- 
- if(keyboard.pressed("space") || keyboard.pressed("ctrl")){
-   var shot = buildShot(scene, airPlane);
-   if(shot) shotOnScreen.push(shot);
- }
+  if(!running) return;
 
- airPlaneColisions(airPlane, enemiesOnScreen, shotOnScreen);
- shotColisions(shotOnScreen, enemiesOnScreen);
- 
- moveShot(shotOnScreen);
- 
- animateDeadEnemies();
- animateDeadPlayer(airPlane);
+  keyboardUpdate(keyboard, airPlane);
+  worldMovement();
+  requestAnimationFrame(render);
+  renderer.render(scene, camera) // Render scene
+
+  if(keyboard.pressed("space") || keyboard.pressed("ctrl")){
+    var shot = buildShot(scene, airPlane);
+    if(shot) shotOnScreen.push(shot);
+  }
+
+  airPlaneColisions(airPlane, enemiesOnScreen, shotOnScreen);
+  shotColisions(shotOnScreen, enemiesOnScreen);
+  
+  moveShot(shotOnScreen);
+  
+  animateDeadEnemies();
+  animateDeadPlayer(airPlane);
 }
 
 // plane functions ----------------------------------------------------------------------------------------------------------------
@@ -82,6 +86,7 @@ var criaPlanoAux = true;
 var planoAux = null;
 
 function worldMovement() {
+  moveEnemies();
   if(plane)
     plane.translateY(velocidadePlano);
   if(planoAux)
