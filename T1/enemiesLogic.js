@@ -1,5 +1,10 @@
 import * as THREE from  'three';
 
+/**
+ * CIMA -> 300
+ * LADOS -> -350 e 350
+ */
+
 // inicialize elements -------------------------------------------------------------------------------------------------------------
 var enemiesOnScreenCounter = 0;
 var enemyMaterialAir = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"});
@@ -16,48 +21,16 @@ var enemiesOnScreen = [];
 
 var airEnemiesShotsOnScreen = [];
 
+var timeInicio;
+var ondaAtual;
+
 // enemies logic functions ---------------------------------------------------------------------------------------------------------
 export function createEnemy(scn,plane) {
   scene = scn;
   airPlane = plane;
 
-  onda1();
-
-  setTimeout(() => {
-    onda2();
-  }, 10000);
-
-  setTimeout(() => {
-    onda3();
-  }, 20000);
-
-  setTimeout(() => {
-    onda4();
-  }, 30000);
-
-  setTimeout(() => {
-    onda5();
-  }, 40000);
-
-  setTimeout(() => {
-    onda6();
-  }, 50000);
-
-  setTimeout(() => {
-    onda7();
-  }, 60000);
-
-  setTimeout(() => {
-    onda8();
-  }, 70000);
-
-  setTimeout(() => {
-    onda9();
-  }, 80000);
-
-  setTimeout(() => {
-    onda10();
-  }, 90000);
+  timeInicio = performance.now();
+  ondaAtual = 1;
 
   // if(enemiesOnScreenCounter < 10 && canCreate) {
     // canCreate = false;
@@ -100,22 +73,53 @@ export function moveEnemies() {
   for(const enemy of enemiesOnScreen) {
     enemy.translateX(enemy.speedX);
     enemy.translateZ(enemy.speedZ);
+
+    if(enemy.isArch)
+      enemy.rotateY(enemy.spin);
     
-    if(enemy.position.z > 110) {
+    if(enemy.position.z > 110 || enemy.position.x > 300 || enemy.position.x < -300) {
       enemy.removeFromParent();
       const indexToRemove = enemiesOnScreen.indexOf(enemy);
       enemiesOnScreen.splice(indexToRemove, 1);
       enemiesOnScreenCounter--;
     }
-
-    // if(enemy.position.z < 0 && enemy.position.z > 8) {
-    //   enemy.canShoot = false;
-    //   buildAirEnemyShot(enemy);
-    //   setTimeout(() => {
-    //     enemy.canShoot = true;
-    //   }, 1250);
-    // }
   }
+  if(ondaAtual === 1) {
+    ondaAtual++;
+    onda1();
+  }
+  else {
+    if(enemiesOnScreen.length === 0)
+      generateNovaOnda();
+  }
+}
+
+function generateNovaOnda() {
+  if(ondaAtual === 2)
+    onda2();
+
+  if(ondaAtual === 3)
+    onda3();
+
+  if(ondaAtual === 4)
+    onda4();
+    
+  if(ondaAtual === 5)
+    onda5();
+
+  if(ondaAtual === 6)
+    onda6();
+
+  if(ondaAtual === 7)
+    onda7();
+
+  if(ondaAtual === 8)
+    onda8();
+
+  if(ondaAtual === 9)
+    onda9();
+
+  ondaAtual++;
 }
 
 function buildAirEnemyShot(enemy) {
@@ -168,6 +172,7 @@ export function resetEnemies () {
 
 function generateEnemyVertical(type, x, z) {
   var newEnemy;
+  
   if(type === 'air') {
     newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
     newEnemy.speedX = 0;
@@ -183,83 +188,115 @@ function generateEnemyVertical(type, x, z) {
   enemiesOnScreen.push(newEnemy);
   enemiesOnScreenCounter++;
   
+  newEnemy.isArch = false;
   scene.add(newEnemy);
 }
 
 function generateEnemyHorizontal(type, x, z, side) {
   var newEnemy;
+  
   if(type === 'air') {
     newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
-
+    
     if(side === 'dir')
-      newEnemy.speedX = -1;
-    else
-      newEnemy.speedX = 1;
-
-    newEnemy.speedZ = 0;
-    newEnemy.position.set(x, 36, z);
-  } else {
-    newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
-
-    if(side === 'dir')
-      newEnemy.speedX = -0.5;
-    else
-      newEnemy.speedX = 0.5;
-
-    newEnemy.speedZ = 0;
-    newEnemy.position.set(x, 10, z);
+      newEnemy.speedX = -0.8;
+      else
+      newEnemy.speedX = 0.8;
+      
+      newEnemy.speedZ = 0;
+      newEnemy.position.set(x, 36, z);
+    } else {
+      newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+      
+      if(side === 'dir')
+      newEnemy.speedX = -0.8;
+      else
+      newEnemy.speedX = 0.8;
+      
+      newEnemy.speedZ = 0;
+      newEnemy.position.set(x, 10, z);
+    }
+    
+    enemiesOnScreen.push(newEnemy);
+    enemiesOnScreenCounter++;
+    
+    newEnemy.isArch = false;
+    scene.add(newEnemy);
   }
   
-  enemiesOnScreen.push(newEnemy);
-  enemiesOnScreenCounter++;
-  
-  scene.add(newEnemy);
-}
-
-function generateEnemyDiagonal(type, x, z) {
+  function generateEnemyDiagonal(type, x, z, hor, vert) {
   // MODIFICAR
   var newEnemy;
   if(type === 'air') {
     newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
-    newEnemy.speedX = 0.5;
-    newEnemy.speedZ = 1;
+    if(hor === 'dir')
+    newEnemy.speedX = 0.75;
+    else
+    newEnemy.speedX = -0.75;
+    
+    if(vert === 'up')
+    newEnemy.speedZ = -0.75;
+    else
+    newEnemy.speedZ = 0.75;
+    
     newEnemy.position.set(x, 36, z);
   } else {
     newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+    
+    if(hor === 'dir')
     newEnemy.speedX = 0.25;
+    else
+    newEnemy.speedX = -0.25;
+    
+    if(vert === 'up')
+    newEnemy.speedZ = -0.5;
+    else
     newEnemy.speedZ = 0.5;
+    
     newEnemy.position.set(x, 10, z);
   }
   
   enemiesOnScreen.push(newEnemy);
   enemiesOnScreenCounter++;
   
+  newEnemy.isArch = false;
   scene.add(newEnemy);
 }
 
-// function generateEnemyArco(type, x, z) {
-//   var newEnemy;
-//   if(type === 'air') {
-//     newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
-//     newEnemy.speedX = 0;
-//     newEnemy.speedZ = 1;
-//     newEnemy.position.set(x, 36, z);
-//   } else {
-//     newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
-//     newEnemy.speedX = 0;
-//     newEnemy.speedZ = 0.5;
-//     newEnemy.position.set(x, 10, z);
-//   }
+function generateEnemyArco(type, x, z, rot) {
+  var newEnemy;
   
-//   enemiesOnScreen.push(newEnemy);
-//   enemiesOnScreenCounter++;
+  if(type === 'air') {
+    newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+    
+    newEnemy.speedX = 0;
+    newEnemy.speedZ = -1;
+    
+    if(rot === 'dir')
+      newEnemy.spin = -1 * (Math.PI/180) / 4;
+    else
+      newEnemy.spin = 1 * (Math.PI/180) / 4;
+    
+    newEnemy.position.set(x, 36, z);
+  } else {
+    newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+    newEnemy.speedX = 0;
+    newEnemy.speedZ = 0.5;
+
+    newEnemy.position.set(x, 10, z);
+  }
   
-//   scene.add(newEnemy);
-// }
+  enemiesOnScreen.push(newEnemy);
+  enemiesOnScreenCounter++;
+  
+  newEnemy.isArch = true;
+  scene.add(newEnemy);
+}
 
 // ONDAS
 
 function onda1() {
+  console.log('onda1');
   generateEnemyVertical('air', -45, -250);
   
   generateEnemyVertical('air', -20, -300);
@@ -272,51 +309,63 @@ function onda1() {
   
   generateEnemyVertical('grd', -30, -300);
   generateEnemyVertical('grd', 30, -300);
-
-  setTimeout(() => {
-    generateEnemyHorizontal('air', -340, 30, 'esq');
-    generateEnemyHorizontal('air', -290, 0, 'esq');
-
-    setTimeout(() => {
-      generateEnemyHorizontal('air', 340, -70, 'dir');
-      generateEnemyHorizontal('air', 290, -45, 'dir');
-    }, 2000);
-  }, 5500);
 }
 
 function onda2() {
-  // onda1();
+  console.log('onda2')
+  generateEnemyHorizontal('air', -250, 30, 'esq');
+  generateEnemyHorizontal('air', -200 , 0, 'esq');
+
+  generateEnemyHorizontal('air', 250, 45, 'dir');
+  generateEnemyHorizontal('air', 200, 15, 'dir');
 }
 
 function onda3() {
+  console.log('onda3')
+  generateEnemyDiagonal('air', -220, -180, 'dir', 'down');
+  generateEnemyDiagonal('air', -260, -160, 'dir', 'down');
+
+  generateEnemyDiagonal('air', 220, -180, 'esq', 'down');
+  generateEnemyDiagonal('air', 260, -160, 'esq', 'down');
+
+  generateEnemyVertical('grd', 45, -270);
+  generateEnemyVertical('grd', -45, -270);
 
 }
 
 function onda4() {
-
+  console.log('onda4')
+  generateEnemyArco('air', -40, 80, 'dir');
+  generateEnemyArco('air', 40, 80, 'esq');
 }
 
 function onda5() {
+  console.log('onda5')
 
 }
 
 function onda6() {
+  console.log('onda6')
 
 }
 
 function onda7() {
+  console.log('onda7')
 
 }
 
 function onda8() {
+  console.log('onda2')
 
 }
 
 function onda9() {
+  console.log('onda2')
 
 }
 
 function onda10() {
+  console.log('onda2')
 
 }
 
