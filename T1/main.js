@@ -242,12 +242,12 @@ function render()
   if(keyboard.pressed("G") && canSwitchGodMode) {
     canSwitchGodMode = false;
     colisaoAtivada = !colisaoAtivada;
-    
+
     setTimeout(() => {
       canSwitchGodMode = true;
     }, 100);
   }
-  console.log(colisaoAtivada)
+  
   for(const enemy of enemiesOnScreen){
     if(enemy.type === 'air' && enemy.canShot){
       buildShot(scene, enemy, boxPlane, 1);

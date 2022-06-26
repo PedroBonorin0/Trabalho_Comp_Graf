@@ -63,9 +63,9 @@ export function animateDeadPlayer(scene, plane) {
 export function colisions(type, airplaneHp, colisaoAtivada){
   if(!colisaoAtivada) return 0;
 
-  let dano  = 0;
+  let dano = 0;
 
-  if(airplaneHp === 0) {
+  if(airplaneHp <= 0) {
     cleanEnemies();
     cleanShots();
     deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
@@ -84,6 +84,7 @@ export function colisions(type, airplaneHp, colisaoAtivada){
   if(type === 1){
     for(const enemy of enemiesOnScreen){
       if(detectCollisionCubes(enemy, boxPlane)){
+        enemiesOnScreen.splice(enemiesOnScreen.indexOf(enemy), 1);
         scene.remove(enemy);
         dano = 2;
       }
@@ -94,6 +95,7 @@ export function colisions(type, airplaneHp, colisaoAtivada){
     for(const shot of shots){
       if(shot.type === 1){
         if(detectCollisionCubes(shot, boxPlane)){
+          shots.splice(shots.indexOf(shot), 1);
           scene.remove(shot);
           dano = 1;
         }
@@ -105,6 +107,7 @@ export function colisions(type, airplaneHp, colisaoAtivada){
     for(const shot of shots){
       if(shot.type === 2){
         if(detectCollisionCubes(shot, boxPlane)){
+          shots.splice(shots.indexOf(shot), 1);
           scene.remove(shot);
           dano = 2;
         }
