@@ -1,16 +1,16 @@
 import * as THREE from  'three';
-import { setCanCreateEnemy, setEnemiesCounter, resetEnemies } from './enemiesLogic.js';
-import { setCanCreateShot, setShotCounter, resetShots } from './playerLogic.js';
+import { setCanCreateEnemy, setEnemiesCounter, resetEnemies, resetEnemiesShot } from './enemiesLogic.js';
+import { setCanCreateShot, setShotCounter, resetShots, setMisselCounter } from './playerLogic.js';
+import { scene } from './main.js';
+
+import { enemiesOnScreen, enemiesOnScreenCounter, cleanEnemies} from './enemiesLogic.js';
+import { shots, shotsCounter, cleanShots, decrementaShots } from './shots.js';
+import { airPlane, boxPlane, deadAirPlane} from './main.js';
 
 var deadEnemies = [];
 var deadPlayer = [];
 
 var set = false;
-
-// auxiliar functions -----------------------------------------------------------------------------------------------------
-export function buildBoundingBox(obj){
-    return new THREE.BoxHelper(obj, 0x00ff00);
-}
 
 export function detectCollisionCubes(object1, object2){
     object1.geometry.computeBoundingBox();
@@ -25,62 +25,6 @@ export function detectCollisionCubes(object1, object2){
     box2.applyMatrix4(object2.matrixWorld);
   
     return box1.intersectsBox(box2);
-  }
-
-// detect colisions functions -------------------------------------------------------------------------------------------
-export function airPlaneColisions(scene, airPlane, deadAirPlane, enemiesVet, vetShot){
-  for (const enemy of enemiesVet){
-    if(detectCollisionCubes(airPlane, enemy)){
-      removeAllEnemies(enemiesVet);
-      removeAllShots(vetShot);
-      deadAirPlane.position.set(airPlane.position.x, airPlane.position.y, airPlane.position.z);
-      airPlane.removeFromParent();
-      deadPlayer.push(deadAirPlane);
-      set = true;
-      setTimeout(() => {
-        airPlane.position.set(0.0, 36, 80);
-        scene.add(airPlane);
-      },440);
-
-      return true;
-    }
-    return false;
-  }
-}
-
-function removeAllEnemies(enemiesVet) {
-  for(const enemy of enemiesVet) {
-    enemy.removeFromParent();
-  }
-  resetEnemies();
-}
-
-function removeAllShots(vetShot){
-  for(const shot of vetShot) {
-    shot.removeFromParent();
-  }
-  resetShots(vetShot);
-}
-
-export function shotColisions(shotVet, enemiesVet){
-  for(const enemy of enemiesVet){
-    for(const shot of shotVet){
-      if(detectCollisionCubes(shot, enemy)){
-        const indexEnemy = enemiesVet.indexOf(enemy)
-        enemiesVet.splice(indexEnemy, 1);
-        deadEnemies.push(enemy);
-
-        setEnemiesCounter();
-        setCanCreateEnemy(true);
-
-        shot.removeFromParent();
-        const indexShot = shotVet.indexOf(shot)
-        shotVet.splice(indexShot, 1);
-        setShotCounter();
-        setCanCreateShot();
-      }
-    }
-  }
 }
 
 export function animateDeadEnemies() {
@@ -104,6 +48,120 @@ export function animateDeadPlayer(scene, plane) {
         deadPlayer.shift();
         return;
       },440);
+    }
+  }
+}
+
+/**
+ * tipo 1: Player x Inimigo
+ * tip2 2: Player x TiroAereo
+ * tipo 3: Player x TiroTerrestre
+ * tipo 4: TiroPlayer x InimigoAereo
+ * tipo 5: MisselPlayer x InimigoTerrestre
+ */
+
+export function colisions(type){
+  if(type === 1){
+    for(const enemy of enemiesOnScreen){
+      if(detectCollisionCubes(enemy, boxPlane)){
+        cleanEnemies();
+        cleanShots();
+        deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
+        airPlane.removeFromParent();
+        deadPlayer.push(deadAirPlane);
+        set = true;
+        setTimeout(() => {
+          airPlane.position.set(0.0, 36, 80);
+          boxPlane.position.set(0.0, 36, 80);
+          scene.add(airPlane);
+        },440);
+      }
+    }
+  }
+
+  if(type === 2){
+    for(const shot of shots){
+      if(shot.type === 1){
+        if(detectCollisionCubes(shot, boxPlane)){
+          cleanEnemies();
+          cleanShots();
+          deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
+          airPlane.removeFromParent();
+          deadPlayer.push(deadAirPlane);
+          set = true;
+          setTimeout(() => {
+            airPlane.position.set(0.0, 36, 80);
+            boxPlane.position.set(0.0, 36, 80);
+            scene.add(airPlane);
+          },440);
+        }
+      }
+    }
+  }
+
+  if(type === 3){
+    for(const shot of shots){
+      if(shot.type === 2){
+        if(detectCollisionCubes(shot, boxPlane)){
+          cleanEnemies();
+          cleanShots();
+          deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
+          airPlane.removeFromParent();
+          deadPlayer.push(deadAirPlane);
+          set = true;
+          setTimeout(() => {
+            airPlane.position.set(0.0, 36, 80);
+            boxPlane.position.set(0.0, 36, 80);
+            scene.add(airPlane);
+          },440);
+        }
+      }
+    }
+  }
+
+  if(type === 4){
+    for(const enemy of enemiesOnScreen){
+      for(const shot of shots){
+        if(shot.type === 3){
+          if(detectCollisionCubes(shot, enemy)){
+            const indexEnemy = enemiesOnScreen.indexOf(enemy);
+            enemiesOnScreen.splice(indexEnemy, 1);
+            deadEnemies.push(enemy);
+
+            setEnemiesCounter();
+            setCanCreateEnemy(true);
+
+            shot.removeFromParent();
+            const indexShot = shots.indexOf(shot);
+            shots.splice(indexShot, 1);
+            decrementaShots();
+            setCanCreateShot();
+          }   
+        }
+      }
+    }
+  }
+
+  if(type === 5){
+    for(const enemy of enemiesOnScreen){
+      for(const shot of shots){
+        if(shot.type === 4 && enemy.type == 'grd'){
+          if(detectCollisionCubes(shot, enemy)){
+            const indexEnemy = enemiesOnScreen.indexOf(enemy);
+            enemiesOnScreen.splice(indexEnemy, 1);
+            deadEnemies.push(enemy);
+
+            setEnemiesCounter();
+            setCanCreateEnemy(true);
+
+            shot.removeFromParent();
+            const indexShot = shots.indexOf(shot);
+            shots.splice(indexShot, 1);
+            decrementaShots();
+            setCanCreateShot();
+          }   
+        }
+      }
     }
   }
 }

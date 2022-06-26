@@ -1,20 +1,26 @@
 import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
-import { detectCollisionCubes, airPlaneColisions, shotColisions, animateDeadEnemies, animateDeadPlayer, deadPlayer} from './colision.js';
-import {buildShot, inicializeKeyboard, keyboardUpdate, moveShot} from './playerLogic.js'
-import { createEnemy, enemiesOnScreen, moveEnemies } from './enemiesLogic.js';
+import { detectCollisionCubes, animateDeadEnemies, animateDeadPlayer, deadPlayer, colisions} from './colision.js';
+import {inicializeKeyboard, keyboardUpdate} from './playerLogic.js'
+import { createEnemy, enemiesOnScreen, moveEnemies, aplyTextures} from './enemiesLogic.js';
 import {createGroundPlaneWired} from '../libs/util/util.js';
+import { buildShot, moveShots } from './shots.js';
 import {initRenderer,
        initCamera,
        initDefaultBasicLight,
        InfoBox,
        onWindowResize} from "../libs/util/util.js";
+import { NumberKeyframeTrack } from '../build/three.module.js';
+import { game } from './ondas.js';
+import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
+import { createLight } from './ilumination.js';
 
 // Inicialização de elelmentos -------------------------------------------------------------------------------------------------- 
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
 var camera = initCamera(new THREE.Vector3(0, 100, 140)); // Init camera in this position
-initDefaultBasicLight(scene);
+//initDefaultBasicLight(scene);
+var dirLight = createLight(scene);
 
 // Variáveis Gerais
 let posicaoSomePlano = -8E-14;
@@ -25,21 +31,76 @@ let velocidadePlano = -0.5;
 let plane = generatePlano();
 plane.translateY(100);
 scene.add(plane);
+
+var loader = new GLTFLoader();
  
 // create a airPlane ------------------------------------------------------------------------------------------------------------
+var airPlane;
+loader.load('./assets/F-16D.gltf', function ( glft ) {
+  airPlane = glft.scene;
+  airPlane.name = 'F-16D';
+  airPlane.scale.set(1.25,1.25,1.25);
+  airPlane.rotateY(-9.45);
+  airPlane.position.set(0.0, 36,80);
+  airPlane.traverse(function (child) {
+    if(child){
+      child.castShadow = true;
+    }
+  });
+  airPlane.castShadow = true;
+  scene.add(airPlane);
+});
+
+var loader = new GLTFLoader();
+
+var deadAirPlane;
+loader.load('./assets/F-16D.gltf', function ( glft ){
+  deadAirPlane = glft.scene;
+  deadAirPlane.name = 'F-16D';
+  deadAirPlane.scale.set(1.25,1.25,1.25);
+  deadAirPlane.rotateY(-9.45);
+  deadAirPlane.position.set(0.0, 36,80);
+  deadAirPlane.traverse(function (child) {
+    if(child){
+      child.castShadow = true;
+    }
+  });
+});
+
+var loader = new GLTFLoader();
+var textureEnemy;
+
+loader.load('./assets/F-16D.gltf', ( glft ) =>{
+  textureEnemy = glft.scene;
+  textureEnemy.name = 'F-16D';
+  textureEnemy.scale.set(1.25,1.25,1.25);
+  textureEnemy.rotateY(-9.45);
+  //textureEnemy.position.set(0.0, 36, 40);
+  textureEnemy.traverse(function (child) {
+    if(child){
+      child.castShadow = true;
+    }
+  });
+  //scene.add(textureEnemy);
+});
+
+
 var airPlaneGeometry = new THREE.ConeGeometry(4, 8, 20);
 var airPlaneMaterial = new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"});
-var airPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
+var boxPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
 
-airPlane.position.set(0.0, 36, 80);
-airPlane.rotateX(-3.14/2);
+boxPlane.position.set(0.0, 36, 80);
+boxPlane.rotateX(-3.14/2);
 
-var deadAirPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
+boxPlane.canShot = true;
+boxPlane.canMissel = true;
+
+var deadBoxPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
  
-deadAirPlane.position.set(0.0, 36, 80);
-deadAirPlane.rotateX(-3.14/2);
+deadBoxPlane.position.set(0.0, 36, 80);
+deadBoxPlane.rotateX(-3.14/2);
 
-scene.add(airPlane);
+//scene.add(boxPlane);
 
 // create a cylinder 1 -----------------------------------------------------------------------------------------------------------
 var cylinder = new THREE.Mesh(
@@ -60,34 +121,53 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 
 // create vet of shots -----------------------------------------------------------------------------------------------------------
 var shotOnScreen = [];
+var misselOnScreen = [];
 
-var game = true; // Habilita o comeco do jogo
+//var game = true; // Habilita o comeco do jogo
 
 // render ------------------------------------------------------------------------------------------------------------------------
 render();
 function render()
 {
-  if(game) {
-    game = false;
-    iniciaGame();
-  }
+  //if(game) {
+    //game = false;
+    //iniciaGame();
+  //}
 
+  game();
+
+  //aplyTextures();
   moveEnemies();
 
-  keyboardUpdate(keyboard, airPlane);
+  keyboardUpdate(keyboard, boxPlane, airPlane);
   worldMovement();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
 
-  if(keyboard.pressed("space") || keyboard.pressed("ctrl")){
-    var shot = buildShot(scene, airPlane);
-    if(shot) shotOnScreen.push(shot);
+  if(keyboard.pressed("ctrl") && boxPlane.canShot){
+    buildShot(scene, null, boxPlane, 3);
   }
 
- game = airPlaneColisions(scene, airPlane, deadAirPlane, enemiesOnScreen, shotOnScreen);
- shotColisions(shotOnScreen, enemiesOnScreen);
- 
- moveShot(shotOnScreen);
+  if(keyboard.pressed("space") && boxPlane.canMissel){
+    console.log('missel');
+    buildShot(scene, null, boxPlane, 4);
+  }
+
+  for(const enemy of enemiesOnScreen){
+    if(enemy.type === 'air' && enemy.canShot){
+      buildShot(scene, enemy, boxPlane, 1);
+    }
+    if(enemy.type === 'grd' && enemy.canShot){
+      buildShot(scene, enemy, boxPlane, 2);
+    }
+  }
+  colisions(1);
+  colisions(2);
+  colisions(3);
+  colisions(4);
+  colisions(5);
+
+  moveShots();
  
  animateDeadEnemies();
  animateDeadPlayer(scene, airPlane);
@@ -136,7 +216,14 @@ function generatePlano() {
 }
 
 function iniciaGame() {
-  createEnemy(scene, airPlane);
+  createEnemy(scene, boxPlane);
 }
 
-export default { airPlane };
+export { 
+  airPlane,
+  boxPlane, 
+  scene,
+  deadBoxPlane,
+  deadAirPlane,
+  textureEnemy,
+};
