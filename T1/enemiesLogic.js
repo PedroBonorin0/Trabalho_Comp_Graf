@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import { Vector3 } from '../build/three.module.js';
-import {airPlane, boxPlane, scene} from './main.js';
+import {airPlane, boxPlane, scene, textureEnemy} from './main.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 
 /**
@@ -53,8 +53,13 @@ export function createEnemy(scn,plane) {
 
 export function moveEnemies() {
   for(const enemy of enemiesOnScreen) {
+      const index = enemiesOnScreen.indexOf(enemy);
+
       enemy.translateX(enemy.speedX);
       enemy.translateZ(enemy.speedZ);
+
+      //textureOnScreen[index].translateX(enemy.speedX);
+      //textureOnScreen[index].translateZ(enemy.speedZ);
 
       if(enemy.isArch)
         enemy.rotateY(enemy.spin);
@@ -99,6 +104,7 @@ function generateEnemyVertical(type, x, z) {
     newEnemy.speedZ = 1;
     newEnemy.position.set(x, 36, z);
     newEnemy.type = 'air';
+
   } else {
     newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
     newEnemy.speedX = 0;
@@ -111,6 +117,9 @@ function generateEnemyVertical(type, x, z) {
   
   enemiesOnScreen.push(newEnemy);
   enemiesOnScreenCounter++;
+
+  //textureOnScreen.push(textureEnemy);
+  //texturesCounter++;
   
   newEnemy.isArch = false;
   scene.add(newEnemy);
@@ -245,17 +254,6 @@ export function aplyTextures(){
     //scene.add(texture);
     texturesCounter++;
   }
-}
-
-var textureEnemy;
-var loader  = new GLTFLoader();
-
-const afterload = (object) => {
-  textureEnemy = object;
-  textureEnemy.castShadow = true;
-  scene.add(textureEnemy);
-  textureOnScreen.push(textureEnemy);
-  texturesCounter++;
 }
 
 export function loadTexture (x, y, z){

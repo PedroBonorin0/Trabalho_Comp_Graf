@@ -71,9 +71,75 @@ function vidacsg(scene,posX,posY,posZ){
  life.scale.set(1.5,1.5,1.5);
  
  life.position.set(posX,posY,posZ);
- scene.add(life);
+ return life;
 }
-vidacsg(scene,0,15,0);
+//vidacsg(scene,0,15,0);
+
+// variaveis para a geração e movimentação das vidas
+var lifeOnScreen = [];
+var lifeBoxOnSreen = [];
+var lifeOnScreenCounter = 0;
+var lifeBoxCounter = 0;
+var lifeAir = new THREE.MeshLambertMaterial({color: "rgb(50, 0, 100)"});
+var lifeAirgeo = new THREE.BoxGeometry(12, 12, 12);
+
+var geometry = new THREE.BoxGeometry( 1.25, 1.25, 1.25 );
+var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+
+var airPlaneGeometry = new THREE.ConeGeometry(4, 8, 20);
+var airPlaneMaterial = new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"});
+
+//função de geração das vidas
+export function generateLife(type, x, z) {
+  var lifeAux;
+  var lifeBox
+  if(type === 'lifeV') {
+    lifeAux = vidacsg(scene, x, 25, z);
+    lifeAux.speedX = 0;
+    lifeAux.speedZ = 1;
+    lifeAux.type = 'lifeV';
+
+    lifeBox = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
+    lifeBox.position.set(x, 25, z);
+    lifeBoxOnSreen.push(lifeBox);
+    lifeBoxCounter++;
+  }
+  lifeAux.canShot = true;
+  
+  lifeOnScreen.push(lifeAux);
+  lifeOnScreenCounter++;
+  
+  lifeAux.isArch = false;
+  scene.add(lifeAux, lifeBox);
+}
+
+// função de movimentação da vidaCSG
+export function movelife() {
+  for(const life of lifeOnScreen) {
+      const index = lifeOnScreen.indexOf(life);
+
+      lifeBoxOnSreen[index].translateX(life.speedX);
+      lifeBoxOnSreen[index].translateZ(life.speedZ);
+
+      life.translateX(life.speedX);
+      life.translateZ(life.speedZ);
+
+      if(life.isArch)
+        life.rotateY(life.spin);
+        lifeBoxOnSreen[index].rotateY(life.spin);
+    
+      if(life.position.z > 100 || life.position.x < -100 || life.position.x > 100) {
+        life.removeFromParent();
+        const indexToRemove = lifeOnScreen.indexOf(life);
+        lifeOnScreen.splice(indexToRemove, 1);
+        lifeOnScreenCounter--;
+
+        lifeBoxOnSreen.splice(indexToRemove, 1);
+        lifeBoxCounter--;
+
+      }
+  }
+}
 
  
 // create a airPlane ------------------------------------------------------------------------------------------------------------
@@ -128,8 +194,6 @@ loader.load('./assets/F-16D.gltf', ( glft ) =>{
 });
 
 
-var airPlaneGeometry = new THREE.ConeGeometry(4, 8, 20);
-var airPlaneMaterial = new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"});
 var boxPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
 
 boxPlane.position.set(0.0, 36, 80);
@@ -220,6 +284,7 @@ function render()
   //}
 
   game();
+  movelife();
 
   //aplyTextures();
   moveEnemies();
@@ -264,12 +329,13 @@ function render()
   airplaneHp -= colisions(3, airplaneHp, colisaoAtivada);
   colisions(4, airplaneHp, colisaoAtivada);
   colisions(5, airplaneHp, colisaoAtivada);
+  colisions(6, airplaneHp, colisaoAtivada);
 
   moveShots();
  
   animateDeadEnemies();
   animateDeadPlayer(scene, airPlane);
-  console.log(airplaneHp)
+  //console.log(airplaneHp)
 }
 
 // plane functions ----------------------------------------------------------------------------------------------------------------
@@ -349,4 +415,8 @@ export {
   deadBoxPlane,
   deadAirPlane,
   textureEnemy,
+  lifeOnScreen,
+  lifeBoxOnSreen,
+  lifeBoxCounter,
+  createEsferaVida,
 };

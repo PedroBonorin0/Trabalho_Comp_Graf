@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import {generateEnemyVertical, generateEnemyHorizontal, generateEnemyDiagonal, generateEnemyArco, enemiesOnScreen} from './enemiesLogic.js'
-import { textureEnemy } from './main.js';
+import { textureEnemy, generateLife } from './main.js';
 
 var inicia = true;
 var ondaAtual = 1;
@@ -13,6 +13,8 @@ export function game (){
         generateEnemyVertical('air', -20, -300);
         generateEnemyVertical('grd', -30, -300);
         generateEnemyVertical('grd', 30, -300);
+        generateLife('lifeV', -30, -250);
+        generateLife('lifeV',10, -300);
 
     }
 }
@@ -25,6 +27,12 @@ function onda1(){
     generateEnemyVertical('air', 45, -450);
     generateEnemyVertical('grd', -30, -300);
     generateEnemyVertical('grd', 30, -300);
+    generateLife('lifeV',-45, -250);
+    generateLife('lifeV',-20, -300);
+    generateLife('lifeV', 0 , -350);
+ 
+
+
 
     if(enemiesOnScreen.length === 0){
         ondaAtual++;
@@ -49,6 +57,9 @@ function onda3(){
     generateEnemyDiagonal('air', 260, -160, 'esq', 'down');
     generateEnemyVertical('grd', 45, -270);
     generateEnemyVertical('grd', -45, -270);
+    generateLife('lifeV', 45, -270);
+    generateLife('lifeV',-45, -270);
+
 
     if(enemiesOnScreen.length === 0){
         inicia = true;
