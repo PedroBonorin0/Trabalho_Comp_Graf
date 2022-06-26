@@ -60,60 +60,56 @@ export function animateDeadPlayer(scene, plane) {
  * tipo 5: MisselPlayer x InimigoTerrestre
  */
 
-export function colisions(type){
+export function colisions(type, airplaneHp, colisaoAtivada){
+  if(!colisaoAtivada) return 0;
+
+  let dano = 0;
+
+  if(airplaneHp <= 0) {
+    cleanEnemies();
+    cleanShots();
+    deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
+    airPlane.removeFromParent();
+    deadPlayer.push(deadAirPlane);
+    set = true;
+    setTimeout(() => {
+      airPlane.position.set(0.0, 36, 80);
+      boxPlane.position.set(0.0, 36, 80);
+      scene.add(airPlane);
+    },440);
+
+    return -5;
+  }
+
   if(type === 1){
     for(const enemy of enemiesOnScreen){
       if(detectCollisionCubes(enemy, boxPlane)){
-        cleanEnemies();
-        cleanShots();
-        deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
-        airPlane.removeFromParent();
-        deadPlayer.push(deadAirPlane);
-        set = true;
-        setTimeout(() => {
-          airPlane.position.set(0.0, 36, 80);
-          boxPlane.position.set(0.0, 36, 80);
-          scene.add(airPlane);
-        },440);
+        enemiesOnScreen.splice(enemiesOnScreen.indexOf(enemy), 1);
+        scene.remove(enemy);
+        dano = 2;
       }
     }
   }
-
+  
   if(type === 2){
     for(const shot of shots){
       if(shot.type === 1){
         if(detectCollisionCubes(shot, boxPlane)){
-          cleanEnemies();
-          cleanShots();
-          deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
-          airPlane.removeFromParent();
-          deadPlayer.push(deadAirPlane);
-          set = true;
-          setTimeout(() => {
-            airPlane.position.set(0.0, 36, 80);
-            boxPlane.position.set(0.0, 36, 80);
-            scene.add(airPlane);
-          },440);
+          shots.splice(shots.indexOf(shot), 1);
+          scene.remove(shot);
+          dano = 1;
         }
       }
     }
   }
-
+  
   if(type === 3){
     for(const shot of shots){
       if(shot.type === 2){
         if(detectCollisionCubes(shot, boxPlane)){
-          cleanEnemies();
-          cleanShots();
-          deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
-          airPlane.removeFromParent();
-          deadPlayer.push(deadAirPlane);
-          set = true;
-          setTimeout(() => {
-            airPlane.position.set(0.0, 36, 80);
-            boxPlane.position.set(0.0, 36, 80);
-            scene.add(airPlane);
-          },440);
+          shots.splice(shots.indexOf(shot), 1);
+          scene.remove(shot);
+          dano = 2;
         }
       }
     }
@@ -164,6 +160,8 @@ export function colisions(type){
       }
     }
   }
+
+  return dano;
 }
 
 export {
