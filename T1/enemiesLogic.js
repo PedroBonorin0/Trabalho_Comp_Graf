@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import { Vector3 } from '../build/three.module.js';
-import {airPlane, boxPlane, scene} from './main.js';
+import {airPlane, boxPlane, scene, textureEnemy} from './main.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 
 /**
@@ -19,9 +19,6 @@ var canCreate = true;
 
 //var sceneAux;
 //var airPlaneAux;
-
-var canAirShot = true;
-var canGroundShot = true;
 
 var airShotCounter = 0;
 var groundShotCounter = 0;
@@ -53,18 +50,18 @@ export function createEnemy(scn,plane) {
 
 export function moveEnemies() {
   for(const enemy of enemiesOnScreen) {
-      enemy.translateX(enemy.speedX);
-      enemy.translateZ(enemy.speedZ);
+    enemy.translateX(enemy.speedX);
+    enemy.translateZ(enemy.speedZ);
 
-      if(enemy.isArch)
-        enemy.rotateY(enemy.spin);
-    
-      if(enemy.position.z > 100 || enemy.position.x < -100 || enemy.position.x > 100) {
-        enemy.removeFromParent();
-        const indexToRemove = enemiesOnScreen.indexOf(enemy);
-        enemiesOnScreen.splice(indexToRemove, 1);
-        enemiesOnScreenCounter--;
-      }
+    if(enemy.isArch)
+      enemy.rotateY(enemy.spin);
+  
+    if(enemy.position.z > 100 || enemy.position.x < -100 || enemy.position.x > 100) {
+      enemy.removeFromParent();
+      const indexToRemove = enemiesOnScreen.indexOf(enemy);
+      enemiesOnScreen.splice(indexToRemove, 1);
+      enemiesOnScreenCounter--;
+    }
   }
 }
 
@@ -110,6 +107,9 @@ function generateEnemyVertical(type, x, z) {
   
   enemiesOnScreen.push(newEnemy);
   enemiesOnScreenCounter++;
+
+  //textureOnScreen.push(textureEnemy);
+  //texturesCounter++;
   
   newEnemy.isArch = false;
   scene.add(newEnemy);
@@ -228,7 +228,7 @@ function generateEnemyArco(type, x, z, rot) {
   scene.add(newEnemy);
 }
 
-export function cleanEnemies(){
+export function clearEnemies(){
   for(const enemy of enemiesOnScreen){
     enemy.removeFromParent();
   }
@@ -239,22 +239,11 @@ export function cleanEnemies(){
 export function aplyTextures(){
   var texture;
   for(const enemy of enemiesOnScreen){
-    texture = loadTextures(1);
+    texture = loadTexture(1);
     textureOnScreen.push(texture);
     //scene.add(texture);
     texturesCounter++;
   }
-}
-
-var textureEnemy;
-var loader  = new GLTFLoader();
-
-const afterload = (object) => {
-  textureEnemy = object;
-  textureEnemy.castShadow = true;
-  scene.add(textureEnemy);
-  textureOnScreen.push(textureEnemy);
-  texturesCounter++;
 }
 
 export function loadTexture (x, y, z){
