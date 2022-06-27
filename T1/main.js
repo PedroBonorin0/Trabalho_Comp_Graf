@@ -268,8 +268,8 @@ function controlledRender()
 render();
 function render()
 {   
+  game();
   if(canGame) {
-    game(canGame);
     canGame = false;
   } else {
     if(keyboard.pressed('enter'))

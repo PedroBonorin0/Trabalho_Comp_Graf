@@ -6,21 +6,15 @@ import { generateEnemyVertical,
          enemiesOnScreen } from './enemiesLogic.js'
 import { textureEnemy, generateLife } from './main.js';
 
-var inicia = true;
 var ondaAtual = 0;
+var createOnda = true;
 
-export function game (init){
-    inicia = init;
-    if(inicia){
-        ondaAtual = 0;
-        inicia = false;
-        proximaOnda();
-    }
+export function game (){
+    proximaOnda();
 }
 
 function proximaOnda() {
-    ondaAtual++;
-
+    if(createOnda) ondaAtual++;
     if(ondaAtual === 1) onda1();
     if(ondaAtual === 2) onda2();
     if(ondaAtual === 3) onda3();
@@ -34,7 +28,9 @@ function proximaOnda() {
 }
 
 function onda1(){
-    
+    if(!createOnda) return;
+    createOnda = false;
+    console.log('onda1')
     generateEnemyVertical('air', -45, -250, textureEnemy);
     generateEnemyVertical('air', -20, -300);
     generateEnemyVertical('grd', -30, -300);
@@ -43,11 +39,15 @@ function onda1(){
     generateLife('lifeV',10, -300);
 
     if(enemiesOnScreen.length === 0){
+        console.log('passaa')
+        createOnda = true
         proximaOnda();
     }
 }
 
 function onda2(){
+    if(!createOnda) return;
+    createOnda = false;
     console.log('onda2')
     generateEnemyHorizontal('air', -250, 30, 'esq');
     generateEnemyHorizontal('air', -200 , 0, 'esq');
@@ -55,11 +55,14 @@ function onda2(){
     generateEnemyHorizontal('air', 200, 15, 'dir');
 
     if(enemiesOnScreen.length === 0){
+        createOnda = true
         proximaOnda();
     }
 }
 
 function onda3(){
+    if(!createOnda) return;
+    createOnda = false;
     console.log('onda3')
     generateEnemyDiagonal('air', -220, -180, 'dir', 'down');
     generateEnemyDiagonal('air', -260, -160, 'dir', 'down');
@@ -72,6 +75,7 @@ function onda3(){
 
 
     if(enemiesOnScreen.length === 0){
+        createOnda = true
         proximaOnda();
     }
 }
