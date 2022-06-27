@@ -8,13 +8,19 @@ import { textureEnemy, generateLife } from './main.js';
 
 var ondaAtual = 0;
 var createOnda = true;
+var canIncrement = true;
 
 export function game (){
     proximaOnda();
 }
 
 function proximaOnda() {
-    if(createOnda) ondaAtual++;
+    if(createOnda) {
+        canIncrement = false;
+        ondaAtual++;
+    }
+
+
     if(ondaAtual === 1) onda1();
     if(ondaAtual === 2) onda2();
     if(ondaAtual === 3) onda3();
@@ -28,54 +34,59 @@ function proximaOnda() {
 }
 
 function onda1(){
-    if(!createOnda) return;
-    createOnda = false;
-    console.log('onda1')
-    generateEnemyVertical('air', -45, -250, textureEnemy);
-    generateEnemyVertical('air', -20, -300);
-    generateEnemyVertical('grd', -30, -300);
-    generateEnemyVertical('grd', 30, -300);
-    generateLife('lifeV', -30, -250);
-    generateLife('lifeV',10, -300);
+    if(createOnda) {
+        console.log('onda1')
+        generateEnemyVertical('air', -45, -250, textureEnemy);
+        generateEnemyVertical('air', -20, -300);
+        generateEnemyVertical('grd', -30, -300);
+        generateEnemyVertical('grd', 30, -300);
+        generateLife('lifeV', -30, -250);
+        generateLife('lifeV',10, -300);
+        createOnda = false;
+    }
 
     if(enemiesOnScreen.length === 0){
         console.log('passaa')
         createOnda = true
+        canIncrement = true;
         proximaOnda();
     }
 }
 
 function onda2(){
-    if(!createOnda) return;
-    createOnda = false;
-    console.log('onda2')
-    generateEnemyHorizontal('air', -250, 30, 'esq');
-    generateEnemyHorizontal('air', -200 , 0, 'esq');
-    generateEnemyHorizontal('air', 250, 45, 'dir');
-    generateEnemyHorizontal('air', 200, 15, 'dir');
+    if(createOnda) {
+        console.log('onda2')
+        generateEnemyHorizontal('air', -250, 30, 'esq');
+        generateEnemyHorizontal('air', -200 , 0, 'esq');
+        generateEnemyHorizontal('air', 250, 45, 'dir');
+        generateEnemyHorizontal('air', 200, 15, 'dir');
+        createOnda = false;
+    }
 
     if(enemiesOnScreen.length === 0){
         createOnda = true
+        canIncrement = true;
         proximaOnda();
     }
 }
 
 function onda3(){
-    if(!createOnda) return;
-    createOnda = false;
-    console.log('onda3')
-    generateEnemyDiagonal('air', -220, -180, 'dir', 'down');
-    generateEnemyDiagonal('air', -260, -160, 'dir', 'down');
-    generateEnemyDiagonal('air', 220, -180, 'esq', 'down');
-    generateEnemyDiagonal('air', 260, -160, 'esq', 'down');
-    generateEnemyVertical('grd', 45, -270);
-    generateEnemyVertical('grd', -45, -270);
-    generateLife('lifeV', 45, -270);
-    generateLife('lifeV',-45, -270);
-
-
+    if(createOnda) {
+        console.log('onda3')
+        generateEnemyDiagonal('air', -220, -180, 'dir', 'down');
+        generateEnemyDiagonal('air', -260, -160, 'dir', 'down');
+        generateEnemyDiagonal('air', 220, -180, 'esq', 'down');
+        generateEnemyDiagonal('air', 260, -160, 'esq', 'down');
+        generateEnemyVertical('grd', 45, -270);
+        generateEnemyVertical('grd', -45, -270);
+        generateLife('lifeV', 45, -270);
+        generateLife('lifeV',-45, -270);
+        createOnda = false;
+    }
+    
     if(enemiesOnScreen.length === 0){
         createOnda = true
+        canIncrement = true;
         proximaOnda();
     }
 }
