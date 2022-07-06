@@ -5,7 +5,7 @@ import { scene } from './main.js';
 
 import { enemiesOnScreen, enemiesOnScreenCounter, cleanEnemies} from './enemiesLogic.js';
 import { shots, shotsCounter, cleanShots, decrementaShots } from './shots.js';
-import { airPlane, boxPlane, deadAirPlane, lifeOnScreen, createEsferaVida, lifeBoxOnSreen, lifeBoxCounter} from './main.js';
+import { airPlane, boxPlane, deadAirPlane, lifeOnScreen, createEsferaVida, lifeBoxOnSreen, lifeBoxCounter, lifeOnScreenCounter} from './main.js';
 
 var deadEnemies = [];
 var deadPlayer = [];
@@ -168,15 +168,11 @@ export function colisions(type, airplaneHp, colisaoAtivada){
         console.log('dfrbaerqawernaern');
         airplaneHp++;
         createEsferaVida;
-        hp.removeFromParent;
-
-        const index = lifeBoxOnSreen.indexOf(hp);
-        lifeBoxOnSreen.splice(index);
-        //lifeBoxCounter--;
-
         hp.removeFromParent();
 
+        const index = lifeBoxOnSreen.indexOf(hp);
         lifeOnScreen.splice(index);
+        lifeOnScreenCounter--;
       }
     }
   }

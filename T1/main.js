@@ -419,4 +419,5 @@ export {
   lifeBoxOnSreen,
   lifeBoxCounter,
   createEsferaVida,
+  lifeOnScreenCounter,
 };
