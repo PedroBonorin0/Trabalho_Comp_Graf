@@ -170,20 +170,9 @@ export function colisions(type, airplaneHp, colisaoAtivada){
   if(type === 6){
     for(const hp of lifeOnScreen){
       if(detectCollisionCubes(hp, boxPlane) && airplaneHp < 5){
-<<<<<<< HEAD
-        console.log('dfrbaerqawernaern');
-        airplaneHp++;
-        createEsferaVida;
-        hp.removeFromParent();
-
-        const index = lifeBoxOnSreen.indexOf(hp);
-        lifeOnScreen.splice(index);
-        lifeOnScreenCounter--;
-=======
         lifeOnScreen.splice(lifeOnScreen.indexOf(hp), 1);
         hp.removeFromParent();
         dano = -1;
->>>>>>> 622b0d8e37f8d424d2c0aeb970a6952d17528591
       }
     }
   }
