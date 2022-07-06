@@ -126,7 +126,6 @@ export function moveShots(){
               else{
                 if(!shot.rodou){
                   shot.rotateX(90 * (Math.PI/180));
-                  //shot.lookAt(player.position);
                 }
                 shot.rodou = true;
                 shot.translateY(1.2);
@@ -162,7 +161,7 @@ export function moveShots(){
     }
 }
 
-export function cleanShots(){
+export function clearShots(){
     for(const shot of shots){
         shot.removeFromParent();
     }

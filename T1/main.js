@@ -21,7 +21,7 @@ var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
 var camera = initCamera(new THREE.Vector3(0, 100, 140)); // Init camera in this position
 //initDefaultBasicLight(scene);
-var dirLight = createLight(scene);
+createLight(scene);
 
 var scene2 = new THREE.Scene();    // Create second
 scene2.background = new THREE.Color(0xa3a3a3);
@@ -33,6 +33,7 @@ let velocidadePlano = -0.5;
 
 // create the ground plane ------------------------------------------------------------------------------------------------------
 let plane = generatePlano();
+plane.receiveShadow = true;
 plane.translateY(100);
 scene.add(plane);
 
@@ -77,9 +78,7 @@ function vidacsg(scene,posX,posY,posZ){
 
 // variaveis para a geração e movimentação das vidas
 var lifeOnScreen = [];
-var lifeBoxOnSreen = [];
-var lifeOnScreenCounter = 0;
-var lifeBoxCounter = 0;
+var lifeBoxOnScreen = [];
 var lifeAir = new THREE.MeshLambertMaterial({color: "rgb(50, 0, 100)"});
 var lifeAirgeo = new THREE.BoxGeometry(12, 12, 12);
 
@@ -101,13 +100,11 @@ export function generateLife(type, x, z) {
 
     lifeBox = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
     lifeBox.position.set(x, 25, z);
-    lifeBoxOnSreen.push(lifeBox);
-    lifeBoxCounter++;
+    lifeBoxOnScreen.push(lifeBox);
   }
   lifeAux.canShot = true;
   
   lifeOnScreen.push(lifeAux);
-  lifeOnScreenCounter++;
   
   lifeAux.isArch = false;
   scene.add(lifeAux, lifeBox);
@@ -116,32 +113,29 @@ export function generateLife(type, x, z) {
 // função de movimentação da vidaCSG
 export function movelife() {
   for(const life of lifeOnScreen) {
-      const index = lifeOnScreen.indexOf(life);
+    const index = lifeOnScreen.indexOf(life);
 
-      lifeBoxOnSreen[index].translateX(life.speedX);
-      lifeBoxOnSreen[index].translateZ(life.speedZ);
+    lifeBoxOnScreen[index].translateX(life.speedX);
+    lifeBoxOnScreen[index].translateZ(life.speedZ);
 
-      life.translateX(life.speedX);
-      life.translateZ(life.speedZ);
+    life.translateX(life.speedX);
+    life.translateZ(life.speedZ);
 
-      if(life.isArch)
-        life.rotateY(life.spin);
-        lifeBoxOnSreen[index].rotateY(life.spin);
-    
-      if(life.position.z > 100 || life.position.x < -100 || life.position.x > 100) {
-        life.removeFromParent();
-        const indexToRemove = lifeOnScreen.indexOf(life);
-        lifeOnScreen.splice(indexToRemove, 1);
-        lifeOnScreenCounter--;
+    if(life.isArch)
+      life.rotateY(life.spin);
+      lifeBoxOnScreen[index].rotateY(life.spin);
+  
+    if(life.position.z > 100 || life.position.x < -100 || life.position.x > 100) {
+      life.removeFromParent();
+      const indexToRemove = lifeOnScreen.indexOf(life);
+      lifeOnScreen.splice(indexToRemove, 1);
 
-        lifeBoxOnSreen.splice(indexToRemove, 1);
-        lifeBoxCounter--;
+      lifeBoxOnScreen.splice(indexToRemove, 1);
 
-      }
+    }
   }
 }
 
- 
 // create a airPlane ------------------------------------------------------------------------------------------------------------
 var loader = new GLTFLoader();
 var airPlane;
@@ -226,16 +220,12 @@ var keyboard = inicializeKeyboard();
 // Listen window size changes ----------------------------------------------------------------------------------------------------
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-// create vet of shots -----------------------------------------------------------------------------------------------------------
-var shotOnScreen = [];
-var misselOnScreen = [];
-
 var airplaneHp = 5;
 var playerHpOnScreen = [];
 
+var canGame = true;
 var colisaoAtivada = true;
 var canSwitchGodMode = true;
-//var game = true; // Habilita o comeco do jogo
 
 //-------------------------------------------------------------------------------
 // Setting virtual camera
@@ -277,36 +267,37 @@ function controlledRender()
 // render ------------------------------------------------------------------------------------------------------------------------
 render();
 function render()
-{
-  //if(game) {
-    //game = false;
-    //iniciaGame();
-  //}
-
+{   
   game();
+  if(canGame) {
+    canGame = false;
+  } else {
+    if(keyboard.pressed('enter'))
+      restartGame();
+  }
+
   movelife();
-
-  //aplyTextures();
+    
+    //aplyTextures();
   moveEnemies();
-
+  
   keyboardUpdate(keyboard, boxPlane, airPlane);
   worldMovement();
   requestAnimationFrame(render);
-  // renderer.render(scene, camera) // Render scene
-
+  
   atualizaVidas(airplaneHp);
-
+  
   controlledRender();
-
+  
   if(keyboard.pressed("ctrl") && boxPlane.canShot){
     buildShot(scene, null, boxPlane, 3);
   }
-
+  
   if(keyboard.pressed("space") && boxPlane.canMissel){
     console.log('missel');
     buildShot(scene, null, boxPlane, 4);
   }
-
+  
   if(keyboard.pressed("G") && canSwitchGodMode) {
     canSwitchGodMode = false;
     colisaoAtivada = !colisaoAtivada;
@@ -329,13 +320,12 @@ function render()
   airplaneHp -= colisions(3, airplaneHp, colisaoAtivada);
   colisions(4, airplaneHp, colisaoAtivada);
   colisions(5, airplaneHp, colisaoAtivada);
-  colisions(6, airplaneHp, colisaoAtivada);
+  airplaneHp -= colisions(6, airplaneHp, colisaoAtivada);
 
   moveShots();
  
   animateDeadEnemies();
   animateDeadPlayer(scene, airPlane);
-  //console.log(airplaneHp)
 }
 
 // plane functions ----------------------------------------------------------------------------------------------------------------
@@ -364,6 +354,7 @@ function worldMovement() {
   if(criaPlanoAux && plane && plane.position.y < posicaoCriaPlano) {
    criaPlanoAux = false;
    planoAux = generatePlano();
+   planoAux.receiveShadow = true;
    planoAux.translateY(590);
    scene.add(planoAux);
   }
@@ -371,6 +362,7 @@ function worldMovement() {
   if(criaPlano && planoAux && planoAux.position.y < posicaoCriaPlano) {
     criaPlano = false;
     plane = generatePlano();
+   planoAux.receiveShadow = true;
     plane.translateY(590);
     scene.add(plane);
   }
@@ -408,6 +400,32 @@ function removeVidas() {
     vida.removeFromParent();
 }
 
+function restartGame() {
+  airplaneHp = 5;
+
+  airPlane.position.set(0.0, 36, 80);
+  boxPlane.position.set(0.0, 36, 80);
+  scene.add(airPlane);
+
+  canGame = true;
+}
+
+export function finalizaGame() {
+  canGame = false;
+  lifeOnScreen = [];
+  lifeBoxOnScreen = [];
+
+  removeAllLifes();
+};
+
+function removeAllLifes() {
+  for(const life of lifeOnScreen)
+    life.removeFromParent();
+  
+  for(const life of lifeBoxOnScreen)
+    life.removeFromParent();
+}
+
 export { 
   airPlane,
   boxPlane, 
@@ -416,8 +434,7 @@ export {
   deadAirPlane,
   textureEnemy,
   lifeOnScreen,
-  lifeBoxOnSreen,
-  lifeBoxCounter,
+  lifeBoxOnScreen,
   createEsferaVida,
   lifeOnScreenCounter,
 };

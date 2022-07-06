@@ -12,7 +12,7 @@ var canCreateMissel = true;
 export function inicializeKeyboard(){
     var keyboard = new KeyboardState();
     return keyboard;
- }
+}
 
 export function keyboardUpdate(kb, obj, airPlane){
    kb.update();

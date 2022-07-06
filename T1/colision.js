@@ -3,9 +3,13 @@ import { setCanCreateEnemy, setEnemiesCounter, resetEnemies, resetEnemiesShot } 
 import { setCanCreateShot, setShotCounter, resetShots, setMisselCounter } from './playerLogic.js';
 import { scene } from './main.js';
 
-import { enemiesOnScreen, enemiesOnScreenCounter, cleanEnemies} from './enemiesLogic.js';
-import { shots, shotsCounter, cleanShots, decrementaShots } from './shots.js';
-import { airPlane, boxPlane, deadAirPlane, lifeOnScreen, createEsferaVida, lifeBoxOnSreen, lifeBoxCounter, lifeOnScreenCounter} from './main.js';
+import { enemiesOnScreen, clearEnemies} from './enemiesLogic.js';
+import { shots, shotsCounter, clearShots, decrementaShots } from './shots.js';
+import { airPlane, 
+         boxPlane,
+         deadAirPlane,
+         lifeOnScreen,
+         finalizaGame } from './main.js';
 
 var deadEnemies = [];
 var deadPlayer = [];
@@ -38,13 +42,13 @@ export function animateDeadEnemies() {
 }
 
 export function animateDeadPlayer(scene, plane) {
-  for(const airPlane of deadPlayer) {
+  for(const player of deadPlayer) {
     if(set){
-      scene.add(airPlane);
-      airPlane.rotateZ(3.14/4);
+      scene.add(player);
+      player.rotateZ(3.14/4);
       setTimeout(() => {
         set = false;
-        airPlane.removeFromParent();
+        player.removeFromParent();
         deadPlayer.shift();
         return;
       },440);
@@ -66,20 +70,21 @@ export function colisions(type, airplaneHp, colisaoAtivada){
   let dano = 0;
 
   if(airplaneHp <= 0) {
-    cleanEnemies();
-    cleanShots();
+    clearEnemies();
+    clearShots();
+    
+    for(const hp of lifeOnScreen){
+      hp.removeFromParent();
+      lifeOnScreen.splice(0, 1);
+    }        
+    
     deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
     airPlane.removeFromParent();
     deadPlayer.push(deadAirPlane);
     set = true;
-    setTimeout(() => {
-      airPlane.position.set(0.0, 36, 80);
-      boxPlane.position.set(0.0, 36, 80);
-      airplaneHp = 5;
-      scene.add(airPlane);
-    },440);
 
-    return -5;
+    finalizaGame();
+    return 0;
   }
 
   if(type === 1){
@@ -165,6 +170,7 @@ export function colisions(type, airplaneHp, colisaoAtivada){
   if(type === 6){
     for(const hp of lifeOnScreen){
       if(detectCollisionCubes(hp, boxPlane) && airplaneHp < 5){
+<<<<<<< HEAD
         console.log('dfrbaerqawernaern');
         airplaneHp++;
         createEsferaVida;
@@ -173,6 +179,11 @@ export function colisions(type, airplaneHp, colisaoAtivada){
         const index = lifeBoxOnSreen.indexOf(hp);
         lifeOnScreen.splice(index);
         lifeOnScreenCounter--;
+=======
+        lifeOnScreen.splice(lifeOnScreen.indexOf(hp), 1);
+        hp.removeFromParent();
+        dano = -1;
+>>>>>>> 622b0d8e37f8d424d2c0aeb970a6952d17528591
       }
     }
   }
