@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import { Vector3 } from '../build/three.module.js';
-import {airPlane, boxPlane, scene, textureEnemy} from './main.js';
+import {airPlane, boxPlane, scene} from './main.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 
 /**
@@ -17,102 +17,111 @@ var enemyGeometryAir = new THREE.BoxGeometry(12, 12, 12);
 var enemyGeometryGround = new THREE.BoxGeometry(14, 10, 14);
 var canCreate = true;
 
-//var sceneAux;
-//var airPlaneAux;
-
 var airShotCounter = 0;
 var groundShotCounter = 0;
-
-// create gltfs --------------------------------------------------------------------------------------------------------------------
-var loader = new GLTFLoader();
- 
-// create a airPlane ------------------------------------------------------------------------------------------------------------
-
-
-// create vet of enemies -----------------------------------------------------------------------------------------------------------
-var enemiesOnScreen = [];
-var textureOnScreen = [];
-
-var airEnemiesShotsOnScreen = [];
-var groundEnemiesShotOnScreen = [];
 
 var timeInicio;
 var ondaAtual;
 
-// enemies logic functions ---------------------------------------------------------------------------------------------------------
+
+// create vet of enemies -----------------------------------------------------------------------------------------------------------
+var enemiesOnScreen = [];
+let textureOnScreen = [];
+
+var airEnemiesShotsOnScreen = [];
+var groundEnemiesShotOnScreen = [];
+
+// create enemies functions ---------------------------------------------------------------------------------------------------------
 export function createEnemy(scn,plane) {
-  //sceneAux = scn;
-  //airPlaneAux = plane;
 
   timeInicio = performance.now();
   ondaAtual = 1;
 }
 
-export function moveEnemies() {
-  for(const enemy of enemiesOnScreen) {
-    enemy.translateX(enemy.speedX);
-    enemy.translateZ(enemy.speedZ);
-
-    if(enemy.isArch)
-      enemy.rotateY(enemy.spin);
-  
-    if(enemy.position.z > 100 || enemy.position.x < -100 || enemy.position.x > 100) {
-      enemy.removeFromParent();
-      const indexToRemove = enemiesOnScreen.indexOf(enemy);
-      enemiesOnScreen.splice(indexToRemove, 1);
-      enemiesOnScreenCounter--;
+export function updateAsset(){
+  for(const enemy of enemiesOnScreen){
+    const aux = textureOnScreen[enemiesOnScreen.indexOf(enemy)];
+    if(aux !== undefined && aux.object){
+      moveEnemies(aux, enemy);
     }
   }
 }
 
+export function moveEnemies() {
+  for(const enemy of enemiesOnScreen) {
+    const aux = textureOnScreen[enemiesOnScreen.indexOf(enemy)];
+    if(aux !== undefined && aux.object){
+      enemy.translateX(enemy.speedX);
+      enemy.translateZ(enemy.speedZ);
+    
+      aux.object.translateX(enemy.speedX);
+      aux.object.translateZ(enemy.speedZ);
 
-export function setCanCreateEnemy(condition){
-  canCreate = condition;
-}
-
-export function setEnemiesCounter(){  
-  enemiesOnScreenCounter--;
-}
-
-export function resetEnemies () {
-  enemiesOnScreen = [];
-  enemiesOnScreenCounter = 0;
-}
-
-export function resetEnemiesShot(){
-  airEnemiesShotsOnScreen = [];
-  groundEnemiesShotOnScreen = [];
-  groundShotCounter = 0;
-  airShotCounter = 0;
+      if(enemy.isArch)
+        enemy.rotateY(enemy.spin);
+        aux.object.rotateY(enemy.spin);
+  
+      if(enemy.position.z > 100 || enemy.position.x < -100 || enemy.position.x > 100) {
+        enemy.removeFromParent();
+        //aux.removeFromParent();
+        const indexToRemove = enemiesOnScreen.indexOf(enemy);
+        enemiesOnScreen.splice(indexToRemove, 1);
+        enemiesOnScreenCounter--;
+        //textureOnScreen.splice(indexToRemove, 1);
+      }
+    }
+  }
 }
 
 function generateEnemyVertical(type, x, z) {
   var newEnemy;
-
-  if(type === 'air') {
-    newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
-    newEnemy.speedX = 0;
-    newEnemy.speedZ = 1;
-    newEnemy.position.set(x, 36, z);
-    newEnemy.type = 'air';
-  } else {
-    newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
-    newEnemy.speedX = 0;
-    newEnemy.speedZ = 0.5;
-    newEnemy.position.set(x, 10, z);
-    newEnemy.type = 'grd';
+  let asset = {
+    object: null,
+    loaded: false,
+    bb: new THREE.Box3()
   }
 
-  newEnemy.canShot = true;
-  
-  enemiesOnScreen.push(newEnemy);
-  enemiesOnScreenCounter++;
+  let loader = new GLTFLoader();
 
-  //textureOnScreen.push(textureEnemy);
-  //texturesCounter++;
-  
-  newEnemy.isArch = false;
-  scene.add(newEnemy);
+  loader.load( './assets/F-16D.gltf', function ( gltf ) {
+    let obj = gltf.scene;
+    obj.traverse( function ( child ) {
+      if ( child.isMesh ) {
+          child.castShadow = true;
+      }
+    });
+    if(type === 'air') {
+      newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+      newEnemy.speedX = 0;
+      newEnemy.speedZ = 1;
+      newEnemy.position.set(x, 36, z);
+      newEnemy.type = 'air';
+
+      //obj.rotateY(3.14);
+      asset.object = gltf.scene;
+      asset.object.position.set(x, 36, z);
+    } else {
+      newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+      newEnemy.speedX = 0;
+      newEnemy.speedZ = 0.5;
+      newEnemy.position.set(x, 10, z);
+      newEnemy.type = 'grd';
+
+      //obj.rotateY(3.14);
+      asset.object = gltf.scene;
+      asset.object.position.set(x, 36, z);
+    }
+    newEnemy.canShot = true;
+    
+    enemiesOnScreen.push(newEnemy);
+    enemiesOnScreenCounter++;
+
+    textureOnScreen.push(asset);
+    texturesCounter++;
+    
+    newEnemy.isArch = false;
+    scene.add(asset.object);
+  }, null, null);
 }
 
 function generateEnemyHorizontal(type, x, z, side) {
@@ -228,6 +237,40 @@ function generateEnemyArco(type, x, z, rot) {
   scene.add(newEnemy);
 }
 
+// textures -------------------------------------------------------------------------------------------------------------------------
+
+function loadGLBFile(asset, file, desiredScale)
+{
+  let loader = new GLTFLoader( );
+  loader.load( file, function ( gltf ) {
+    let obj = gltf.scene;
+    obj.traverse( function ( child ) {
+      if ( child.isMesh ) {
+          child.castShadow = true;
+      }
+    });
+    obj = normalizeAndRescale(obj, desiredScale);
+    obj = fixPosition(obj);
+    obj.updateMatrixWorld( true )
+    scene.add ( obj );
+
+    // Store loaded gltf in our js object
+    asset.object = gltf.scene;
+  }, null, null);
+}
+// GLTFs ----------------------------------------------------------------------------------------------------------------------------
+
+function normalizeAndRescale(obj, newScale)
+{
+  var scale = getMaxSize(obj); // Available in 'utils.js'
+  obj.scale.set(newScale * (1.0/scale),
+                newScale * (1.0/scale),
+                newScale * (1.0/scale));
+  return obj;
+}
+
+
+// auxiliar functions ---------------------------------------------------------------------------------------------------------------
 export function clearEnemies(){
   for(const enemy of enemiesOnScreen){
     enemy.removeFromParent();
@@ -236,29 +279,27 @@ export function clearEnemies(){
   enemiesOnScreenCounter = 0;
 }
 
-export function aplyTextures(){
-  var texture;
-  for(const enemy of enemiesOnScreen){
-    texture = loadTexture(1);
-    textureOnScreen.push(texture);
-    //scene.add(texture);
-    texturesCounter++;
-  }
+export function setCanCreateEnemy(condition){
+  canCreate = condition;
 }
 
-export function loadTexture (x, y, z){
-  loader.load('./assets/F-16D.gltf', function ( gltf ){
-    gltf.scene.position.set(x,y,z);
-    gltf.scene.scale.set(1.25,1.25,1.25);
-    gltf.scene.rotateY(-9.45);
-
-    gltf.scene.traverse(function(child){
-      if(child) child.castShadow = true;
-    });
-    afterload(gltf);
-  });
+export function setEnemiesCounter(){  
+  enemiesOnScreenCounter--;
 }
 
+export function resetEnemies () {
+  enemiesOnScreen = [];
+  enemiesOnScreenCounter = 0;
+}
+
+export function resetEnemiesShot(){
+  airEnemiesShotsOnScreen = [];
+  groundEnemiesShotOnScreen = [];
+  groundShotCounter = 0;
+  airShotCounter = 0;
+}
+
+// exports --------------------------------------------------------------------------------------------------------------------------
 export {
   enemiesOnScreenCounter,
   enemiesOnScreen,

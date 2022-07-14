@@ -2,7 +2,7 @@ import * as THREE from  'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
 import { detectCollisionCubes, animateDeadEnemies, animateDeadPlayer, deadPlayer, colisions} from './colision.js';
 import {inicializeKeyboard, keyboardUpdate} from './playerLogic.js'
-import { createEnemy, enemiesOnScreen, moveEnemies, aplyTextures} from './enemiesLogic.js';
+import { createEnemy, enemiesOnScreen, moveEnemies, updateAsset} from './enemiesLogic.js';
 import {createGroundPlaneWired, degreesToRadians} from '../libs/util/util.js';
 import { buildShot, moveShots } from './shots.js';
 import {initRenderer,
@@ -169,24 +169,38 @@ loader.load('./assets/F-16D.gltf', function ( glft ){
     }
   });
 });
+//TODO -------------------------------------------------------------------------------------------------------------------------------
+//let asset = {
+  //object: null,
+  //loaded: false,
+  //bb: new THREE.Box3()
+//}
 
-var loader = new GLTFLoader();
-var textureEnemy;
+var asset
 
-loader.load('./assets/F-16D.gltf', ( glft ) =>{
-  textureEnemy = glft.scene;
-  textureEnemy.name = 'F-16D';
-  textureEnemy.scale.set(1.25,1.25,1.25);
-  textureEnemy.rotateY(-9.45);
-  //textureEnemy.position.set(0.0, 36, 40);
-  textureEnemy.traverse(function (child) {
-    if(child){
-      child.castShadow = true;
-    }
-  });
-  //scene.add(textureEnemy);
-});
+function loadGLBFile(asset, file, x, y, z)
+{
+  let loader = new GLTFLoader( );
+  loader.load( file, function ( gltf ) {
+    let obj = gltf.scene;
+    obj.traverse( function ( child ) {
+      if ( child.isMesh ) {
+          child.castShadow = true;
+      }
+    });
+    obj.position.set(0,0,0);
+    obj.updateMatrixWorld( true )
+    asset = gltf.scene;
+    //scene.add(gltf.scene);
+    }, undefined, function (error) {
+      console.error(error);
+    });
+}
 
+//loadGLBFile(asset, './assets/F-16D.gltf', 0, 36, 0);
+//scene.add(asset);
+
+//TODO -------------------------------------------------------------------------------------------------------------------------------
 
 var boxPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
 
@@ -200,8 +214,6 @@ var deadBoxPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
  
 deadBoxPlane.position.set(0.0, 36, 80);
 deadBoxPlane.rotateX(-3.14/2);
-
-//scene.add(boxPlane);
 
 // create a cylinder 1 -----------------------------------------------------------------------------------------------------------
 var cylinder = new THREE.Mesh(
@@ -280,6 +292,7 @@ function render()
     
     //aplyTextures();
   moveEnemies();
+  //updateAsset();
   
   keyboardUpdate(keyboard, boxPlane, airPlane);
   worldMovement();
@@ -432,9 +445,8 @@ export {
   scene,
   deadBoxPlane,
   deadAirPlane,
-  textureEnemy,
+  asset,
   lifeOnScreen,
   lifeBoxOnScreen,
   createEsferaVida,
-  lifeOnScreenCounter,
 };
