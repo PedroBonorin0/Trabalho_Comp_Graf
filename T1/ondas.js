@@ -4,7 +4,7 @@ import { generateEnemyVertical,
          generateEnemyDiagonal,
          generateEnemyArco,
          enemiesOnScreen } from './enemiesLogic.js'
-import { textureEnemy, generateLife } from './main.js';
+import { generateLife } from './main.js';
 
 var ondaAtual = 0;
 var createOnda = true;
@@ -22,8 +22,8 @@ function proximaOnda() {
 
 
     if(ondaAtual === 1) onda1();
-    if(ondaAtual === 2) onda2();
-    if(ondaAtual === 3) onda3();
+    //if(ondaAtual === 2) onda2();
+    //if(ondaAtual === 3) onda3();
     // if(ondaAtual === 4) onda4();
     // if(ondaAtual === 5) onda5();
     // if(ondaAtual === 6) onda6();
@@ -34,19 +34,17 @@ function proximaOnda() {
 }
 
 function onda1(){
-    if(createOnda) {
-        console.log('onda1')
-        generateEnemyVertical('air', -45, -250, textureEnemy);
-        generateEnemyVertical('air', -20, -300);
-        generateEnemyVertical('grd', -30, -300);
-        generateEnemyVertical('grd', 30, -300);
-        generateLife('lifeV', -30, -250);
-        generateLife('lifeV',10, -300);
-        createOnda = false;
-    }
+    if(!createOnda) return;
+    createOnda = false;
+    console.log('onda1')
+    generateEnemyVertical('air', -45, -250);
+    generateEnemyVertical('air', -20, -300);
+    generateEnemyVertical('grd', -30, -300);
+    generateEnemyVertical('grd', 30, -300);
+    generateLife('lifeV', -30, -250);
+    generateLife('lifeV',10, -300);
 
     if(enemiesOnScreen.length === 0){
-        console.log('passaa')
         createOnda = true
         canIncrement = true;
         proximaOnda();
