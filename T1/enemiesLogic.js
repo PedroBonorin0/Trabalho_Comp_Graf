@@ -1,6 +1,5 @@
 import * as THREE from  'three';
-import { Vector3 } from '../build/three.module.js';
-import {airPlane, boxPlane, scene} from './main.js';
+import { scene} from './main.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 
 /**
@@ -10,42 +9,16 @@ import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 
 // inicialize elements -------------------------------------------------------------------------------------------------------------
 var enemiesOnScreenCounter = 0;
-var texturesCounter = 0;
 var enemyMaterialAir = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 100)"});
 var enemyMaterialGround = new THREE.MeshLambertMaterial({color: "rgb(250, 0, 150)"});
 var enemyGeometryAir = new THREE.BoxGeometry(12, 12, 12);
 var enemyGeometryGround = new THREE.BoxGeometry(14, 10, 14);
-var canCreate = true;
-
-var airShotCounter = 0;
-var groundShotCounter = 0;
-
-var timeInicio;
-var ondaAtual;
-
-
 // create vet of enemies -----------------------------------------------------------------------------------------------------------
 var enemiesOnScreen = [];
 let textureOnScreen = [];
 
 var airEnemiesShotsOnScreen = [];
 var groundEnemiesShotOnScreen = [];
-
-// create enemies functions ---------------------------------------------------------------------------------------------------------
-export function createEnemy(scn,plane) {
-
-  timeInicio = performance.now();
-  ondaAtual = 1;
-}
-
-export function updateAsset(){
-  for(const enemy of enemiesOnScreen){
-    const aux = textureOnScreen[enemiesOnScreen.indexOf(enemy)];
-    if(aux !== undefined && aux.object){
-      moveEnemies(aux, enemy);
-    }
-  }
-}
 
 export function moveEnemies() {
   for(const enemy of enemiesOnScreen) {
@@ -65,11 +38,10 @@ export function moveEnemies() {
   
       if(enemy.position.z > 100 || enemy.position.x < -100 || enemy.position.x > 100) {
         enemy.removeFromParent();
-        //aux.removeFromParent();
+
         const indexToRemove = enemiesOnScreen.indexOf(enemy);
         enemiesOnScreen.splice(indexToRemove, 1);
         enemiesOnScreenCounter--;
-        //textureOnScreen.splice(indexToRemove, 1);
       }
     }
   }
@@ -109,7 +81,6 @@ function generateEnemyVertical(type, x, z) {
       newEnemy.position.set(x, 10, z);
       newEnemy.type = 'grd';
       
-      //obj.rotateY(3.14);
       asset.object = gltf.scene;
       asset.object.position.set(x, 10, z);
       obj.position.set(x, 10, z);
@@ -120,7 +91,6 @@ function generateEnemyVertical(type, x, z) {
     enemiesOnScreenCounter++;
 
     textureOnScreen.push(asset);
-    texturesCounter++;
     
     newEnemy.isArch = false;
 
@@ -165,7 +135,6 @@ function generateEnemyHorizontal(type, x, z, side) {
   }
   
   function generateEnemyDiagonal(type, x, z, hor, vert) {
-  // MODIFICAR
   var newEnemy;
   if(type === 'air') {
     newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
@@ -241,38 +210,6 @@ function generateEnemyArco(type, x, z, rot) {
   scene.add(newEnemy);
 }
 
-// textures -------------------------------------------------------------------------------------------------------------------------
-
-function loadGLBFile(asset, file, desiredScale)
-{
-  let loader = new GLTFLoader( );
-  loader.load( file, function ( gltf ) {
-    let obj = gltf.scene;
-    obj.traverse( function ( child ) {
-      if ( child.isMesh ) {
-          child.castShadow = true;
-      }
-    });
-    obj = normalizeAndRescale(obj, desiredScale);
-    obj = fixPosition(obj);
-    obj.updateMatrixWorld( true )
-    scene.add ( obj );
-
-    // Store loaded gltf in our js object
-    asset.object = gltf.scene;
-  }, null, null);
-}
-// GLTFs ----------------------------------------------------------------------------------------------------------------------------
-
-function normalizeAndRescale(obj, newScale)
-{
-  var scale = getMaxSize(obj); // Available in 'utils.js'
-  obj.scale.set(newScale * (1.0/scale),
-                newScale * (1.0/scale),
-                newScale * (1.0/scale));
-  return obj;
-}
-
 
 // auxiliar functions ---------------------------------------------------------------------------------------------------------------
 export function clearEnemies(){
@@ -281,10 +218,6 @@ export function clearEnemies(){
   }
   enemiesOnScreen = [];
   enemiesOnScreenCounter = 0;
-}
-
-export function setCanCreateEnemy(condition){
-  canCreate = condition;
 }
 
 export function setEnemiesCounter(){  

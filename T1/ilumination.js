@@ -1,13 +1,14 @@
 import * as THREE from  'three';
 
 export function createLight(scene){
-    var lightIntensity = 1.0;
     var lightPosition = new THREE.Vector3(-10.0, 80,60);
     var lightColor = "rgb(255,255,255)"; 
 
     var dirLight = new THREE.DirectionalLight(lightColor);
     setDirectionalLighting(scene, dirLight, lightPosition);
 
+    dirLight.castShadow = true;
+    
     return dirLight;
 }
 

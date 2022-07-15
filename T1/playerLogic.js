@@ -1,12 +1,10 @@
 import KeyboardState from '../libs/util/KeyboardState.js';
-import * as THREE from  'three';
 
 // Variáveis auxiliares ----------------------------------------------------------------------------
 var shotOnScreenCounter = 0;
 var canCreateShot = true;
 
 var misselOnScreenCounter = 0;
-var canCreateMissel = true;
 
 // Funções Keyboard ---------------------------------------------------------------------------------
 export function inicializeKeyboard(){

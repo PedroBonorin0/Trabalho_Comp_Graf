@@ -1,10 +1,8 @@
-import * as THREE from  'three';
-import { setCanCreateEnemy, setEnemiesCounter, resetEnemies, resetEnemiesShot } from './enemiesLogic.js';
-import { setCanCreateShot, setShotCounter, resetShots, setMisselCounter } from './playerLogic.js';
+import { setEnemiesCounter } from './enemiesLogic.js';
+import { setCanCreateShot } from './playerLogic.js';
 import { scene } from './main.js';
-
 import { enemiesOnScreen, clearEnemies} from './enemiesLogic.js';
-import { shots, shotsCounter, clearShots, decrementaShots } from './shots.js';
+import { shots, clearShots, decrementaShots } from './shots.js';
 import { airPlane, 
          boxPlane,
          deadAirPlane,
@@ -131,7 +129,6 @@ export function colisions(type, airplaneHp, colisaoAtivada){
             deadEnemies.push(enemy);
 
             setEnemiesCounter();
-            setCanCreateEnemy(true);
 
             shot.removeFromParent();
             const indexShot = shots.indexOf(shot);
@@ -154,7 +151,6 @@ export function colisions(type, airplaneHp, colisaoAtivada){
             deadEnemies.push(enemy);
 
             setEnemiesCounter();
-            setCanCreateEnemy(true);
 
             shot.removeFromParent();
             const indexShot = shots.indexOf(shot);

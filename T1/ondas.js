@@ -4,7 +4,7 @@ import { generateEnemyVertical,
          generateEnemyDiagonal,
          generateEnemyArco,
          enemiesOnScreen } from './enemiesLogic.js'
-import { generateLife } from './main.js';
+import { generateLife } from './lifeCSG.js';
 
 var ondaAtual = 0;
 var createOnda = true;

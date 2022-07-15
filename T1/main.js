@@ -1,8 +1,9 @@
 import * as THREE from  'three';
 import { animateDeadEnemies, animateDeadPlayer, colisions} from './colision.js';
 import {inicializeKeyboard, keyboardUpdate} from './playerLogic.js'
-import { createEnemy, enemiesOnScreen, moveEnemies } from './enemiesLogic.js';
-import {createGroundPlaneWired, degreesToRadians} from '../libs/util/util.js';
+import { enemiesOnScreen, moveEnemies } from './enemiesLogic.js';
+import { generateLife, movelife } from './lifeCSG.js';
+import {createGroundPlaneWired } from '../libs/util/util.js';
 import { buildShot, moveShots } from './shots.js';
 import {initRenderer,
        initCamera,
@@ -10,7 +11,6 @@ import {initRenderer,
 import { game } from './ondas.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import { createLight } from './ilumination.js';
-import { CSG } from "../libs/other/CSGMesh.js";
 
 // Inicialização de elelmentos -------------------------------------------------------------------------------------------------- 
 var scene = new THREE.Scene();    // Create main scene
@@ -33,104 +33,12 @@ plane.receiveShadow = true;
 plane.translateY(100);
 scene.add(plane);
 
-//Create a CSG--------------------------------------------------------------------------------------------------------------------
-
-function vidacsg(scene,posX,posY,posZ){
-
-  //----------------------Create a corte 1 -----------------------------
- var geometrycube = new THREE.Mesh(new THREE.BoxGeometry( 1.1, 4, 10 ));
- geometrycube.position.set(0,8,0);
- 
- ////----------------------create a corte 2 -----------------------------
- var geometrycube2 = new THREE.Mesh(new THREE.BoxGeometry( 1.1, 4, 10 ));
- geometrycube2.position.set(0,8,0);
- geometrycube2.rotateZ(80.11);
- 
- //----------------------Create a cylinder 1 -----------------------------
- var cylinderCSG = new THREE.Mesh(new THREE.CylinderGeometry( 1, 4, 0.1, 18 ));
- cylinderCSG.position.set(0,8,0);
- cylinderCSG.rotateX(degreesToRadians(-90));
- 
- // CSG
- cylinderCSG.matrixAutoUpdate = false;
- cylinderCSG.updateMatrix();
- geometrycube.matrixAutoUpdate = false;
- geometrycube.updateMatrix();
- geometrycube2.matrixAutoUpdate = false;
- geometrycube2.updateMatrix();
- var vida = CSG.fromMesh(cylinderCSG);
- var corte1 = CSG.fromMesh(geometrycube);
- var corte2 = CSG.fromMesh(geometrycube2);
- var corteCSG = vida.subtract(corte1);
- var corteCSG2 = corteCSG.subtract(corte2);
- var life = CSG.toMesh(corteCSG2, new THREE.Matrix4());
- life.material = new THREE.MeshPhongMaterial ({color : "rgb(200,0,0)"});
- life.scale.set(1.5,1.5,1.5);
- 
- life.position.set(posX,posY,posZ);
- return life;
-}
-//vidacsg(scene,0,15,0);
-
-// variaveis para a geração e movimentação das vidas
+// Create CSG HP ----------------------------------------------------------------------------------------------------------------
 var lifeOnScreen = [];
-var lifeBoxOnScreen = [];
-var lifeAir = new THREE.MeshLambertMaterial({color: "rgb(50, 0, 100)"});
-var lifeAirgeo = new THREE.BoxGeometry(12, 12, 12);
-
-var geometry = new THREE.BoxGeometry( 1.25, 1.25, 1.25 );
-var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+generateLife('lifeV', -10, 150);
 
 var airPlaneGeometry = new THREE.ConeGeometry(4, 8, 20);
 var airPlaneMaterial = new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"});
-
-//função de geração das vidas
-export function generateLife(type, x, z) {
-  var lifeAux;
-  var lifeBox
-  if(type === 'lifeV') {
-    lifeAux = vidacsg(scene, x, 25, z);
-    lifeAux.speedX = 0;
-    lifeAux.speedZ = 1;
-    lifeAux.type = 'lifeV';
-
-    lifeBox = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
-    lifeBox.position.set(x, 25, z);
-    lifeBoxOnScreen.push(lifeBox);
-  }
-  lifeAux.canShot = true;
-  
-  lifeOnScreen.push(lifeAux);
-  
-  lifeAux.isArch = false;
-  scene.add(lifeAux, lifeBox);
-}
-
-// função de movimentação da vidaCSG
-export function movelife() {
-  for(const life of lifeOnScreen) {
-    const index = lifeOnScreen.indexOf(life);
-
-    lifeBoxOnScreen[index].translateX(life.speedX);
-    lifeBoxOnScreen[index].translateZ(life.speedZ);
-
-    life.translateX(life.speedX);
-    life.translateZ(life.speedZ);
-
-    if(life.isArch)
-      life.rotateY(life.spin);
-      lifeBoxOnScreen[index].rotateY(life.spin);
-  
-    if(life.position.z > 100 || life.position.x < -100 || life.position.x > 100) {
-      life.removeFromParent();
-      const indexToRemove = lifeOnScreen.indexOf(life);
-      lifeOnScreen.splice(indexToRemove, 1);
-
-      lifeBoxOnScreen.splice(indexToRemove, 1);
-
-    }
-  }
-}
 
 // create a airPlane ------------------------------------------------------------------------------------------------------------
 var loader = new GLTFLoader();
@@ -146,15 +54,14 @@ loader.load('./assets/F-16D.gltf', function ( glft ) {
       child.castShadow = true;
     }
   });
-  airPlane.castShadow = true;
   scene.add(airPlane);
 });
 
 var deadAirPlane;
-loader.load('./assets/T90.glb', function ( glft ){
+loader.load('./assets/F-16D.gltf', function ( glft ){
   deadAirPlane = glft.scene;
   deadAirPlane.name = 'DEAD';
-  deadAirPlane.scale.set(1.0,1.0,1.0);
+  deadAirPlane.scale.set(1.25,1.25,1.25);
   deadAirPlane.rotateY(-9.45);
   deadAirPlane.position.set(0.0, 36,80);
   deadAirPlane.traverse(function (child) {
@@ -163,34 +70,6 @@ loader.load('./assets/T90.glb', function ( glft ){
     }
   });
 });
-//TODO -------------------------------------------------------------------------------------------------------------------------------
-//let asset = {
-  //object: null,
-  //loaded: false,
-  //bb: new THREE.Box3()
-//}
-
-// function loadGLBFile(asset, file, x, y, z)
-// {
-//   let loader = new GLTFLoader( );
-//   loader.load( file, function ( gltf ) {
-//     let obj = gltf.scene;
-//     obj.traverse( function ( child ) {
-//       if ( child.isMesh ) {
-//           child.castShadow = true;
-//       }
-//     });
-//     obj.position.set(0,0,0);
-//     obj.updateMatrixWorld( true )
-//     asset = gltf.scene;
-//     //scene.add(gltf.scene);
-//     }, undefined, function (error) {
-//       console.error(error);
-//     });
-// }
-
-//loadGLBFile(asset, './assets/F-16D.gltf', 0, 36, 0);
-//scene.add(asset);
 
 //TODO -------------------------------------------------------------------------------------------------------------------------------
 
@@ -207,17 +86,6 @@ var deadBoxPlane = new THREE.Mesh(airPlaneGeometry, airPlaneMaterial);
 deadBoxPlane.position.set(0.0, 36, 80);
 deadBoxPlane.rotateX(-3.14/2);
 
-// create a cylinder 1 -----------------------------------------------------------------------------------------------------------
-var cylinder = new THREE.Mesh(
-  new THREE.CylinderGeometry( 1, 8, 0.1, 20 ));
-
-// create a corte 1 -----------------------------------------------------------------------------------------------------------
-var plane1 = new THREE.Mesh(new THREE.PlaneGeometry( 7,7 ));
-
-// create a corte 2 -----------------------------------------------------------------------------------------------------------
-var plane2 = new THREE.Mesh(new THREE.PlaneGeometry( 7,7 ));
-
- 
 // create a keyboard -------------------------------------------------------------------------------------------------------------
 var keyboard = inicializeKeyboard();
  
@@ -282,9 +150,7 @@ function render()
 
   movelife();
     
-    //aplyTextures();
   moveEnemies();
-  //updateAsset();
   
   keyboardUpdate(keyboard, boxPlane, airPlane);
   worldMovement();
@@ -377,10 +243,6 @@ function generatePlano() {
   return createGroundPlaneWired(500, 500);
 }
 
-function iniciaGame() {
-  createEnemy(scene, boxPlane);
-}
-
 function atualizaVidas(vidas) {
   removeVidas();
   let posicaoVida = {x: -20, y: 0, z: 0};
@@ -418,16 +280,11 @@ function restartGame() {
 export function finalizaGame() {
   canGame = false;
   lifeOnScreen = [];
-  lifeBoxOnScreen = [];
-
   removeAllLifes();
 };
 
 function removeAllLifes() {
   for(const life of lifeOnScreen)
-    life.removeFromParent();
-  
-  for(const life of lifeBoxOnScreen)
     life.removeFromParent();
 }
 
@@ -437,8 +294,6 @@ export {
   scene,
   deadBoxPlane,
   deadAirPlane,
-  // asset,
   lifeOnScreen,
-  lifeBoxOnScreen,
   createEsferaVida,
 };
