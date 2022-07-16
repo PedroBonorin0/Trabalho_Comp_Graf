@@ -8,7 +8,7 @@ import { buildShot, moveShots } from './shots.js';
 import {initRenderer,
        initCamera,
        onWindowResize} from "../libs/util/util.js";
-import { game } from './ondas.js';
+import { game, jogo, reiniciaJogo, reiniciaJogo2 } from './ondas.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import { createLight } from './ilumination.js';
 
@@ -99,6 +99,10 @@ var canGame = true;
 var colisaoAtivada = true;
 var canSwitchGodMode = true;
 
+export function setHp(){
+  airplaneHp = 5;
+}
+
 //-------------------------------------------------------------------------------
 // Setting virtual camera
 //-------------------------------------------------------------------------------
@@ -140,12 +144,17 @@ function controlledRender()
 render();
 function render()
 {   
-  game();
-  if(canGame) {
-    canGame = false;
-  } else {
-    if(keyboard.pressed('enter'))
-      restartGame();
+
+  if(keyboard.pressed('enter')){
+    reiniciaJogo();
+  }
+  else{
+    if(airplaneHp <= 0){
+      reiniciaJogo2();
+    }
+    else{
+      jogo();
+    }
   }
 
   movelife();
@@ -196,7 +205,7 @@ function render()
   moveShots();
  
   animateDeadEnemies();
-  animateDeadPlayer(scene, airPlane);
+  animateDeadPlayer(scene);
 }
 
 // plane functions ----------------------------------------------------------------------------------------------------------------
@@ -296,4 +305,5 @@ export {
   deadAirPlane,
   lifeOnScreen,
   createEsferaVida,
+  airplaneHp,
 };

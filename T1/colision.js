@@ -7,7 +7,9 @@ import { airPlane,
          boxPlane,
          deadAirPlane,
          lifeOnScreen,
-         finalizaGame } from './main.js';
+         finalizaGame,
+         setHp } from './main.js';
+import {reiniciaJogo, setOnda} from './ondas.js';
 
 var deadEnemies = [];
 var deadPlayer = [];
@@ -39,11 +41,11 @@ export function animateDeadEnemies() {
   }
 }
 
-export function animateDeadPlayer(scene, plane) {
+export function animateDeadPlayer(scene) {
   for(const player of deadPlayer) {
     if(set){
       scene.add(player);
-      player.rotateZ(3.14/4);
+      player.rotateZ(3.14/40);
       setTimeout(() => {
         set = false;
         player.removeFromParent();
@@ -68,8 +70,6 @@ export function colisions(type, airplaneHp, colisaoAtivada){
   let dano = 0;
 
   if(airplaneHp <= 0) {
-    clearEnemies();
-    clearShots();
     
     for(const hp of lifeOnScreen){
       hp.removeFromParent();
@@ -81,7 +81,6 @@ export function colisions(type, airplaneHp, colisaoAtivada){
     deadPlayer.push(deadAirPlane);
     set = true;
 
-    finalizaGame();
     return 0;
   }
 
