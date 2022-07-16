@@ -37,10 +37,14 @@ function onda1(){
     if(!createOnda) return;
     createOnda = false;
     console.log('onda1')
-    generateEnemyVertical('air', -45, -250);
-    generateEnemyVertical('air', -20, -300);
-    generateEnemyVertical('grd', -30, -300);
-    generateEnemyVertical('grd', 30, -300);
+    //generateEnemyVertical('air', -45, -250);
+    //generateEnemyVertical('air', -20, -300);
+    //generateEnemyVertical('grd', -30, -300);
+    //generateEnemyVertical('grd', 30, -300);
+    //generateEnemyHorizontal('air', 100, 30, 'dir');
+    //generateEnemyHorizontal('air', -100 , 0, 'esq');
+    generateEnemyArco('air', -100, 100, 'esq');
+    generateEnemyArco('air', 100, 100, 'dir');
     generateLife('lifeV', -30, -250);
     generateLife('lifeV',10, -300);
 

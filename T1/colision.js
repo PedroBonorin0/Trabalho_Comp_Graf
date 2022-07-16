@@ -1,4 +1,4 @@
-import { setEnemiesCounter } from './enemiesLogic.js';
+import { setEnemiesCounter, textureOnScreen } from './enemiesLogic.js';
 import { setCanCreateShot } from './playerLogic.js';
 import { scene } from './main.js';
 import { enemiesOnScreen, clearEnemies} from './enemiesLogic.js';
@@ -88,8 +88,9 @@ export function colisions(type, airplaneHp, colisaoAtivada){
   if(type === 1){
     for(const enemy of enemiesOnScreen){
       if(detectCollisionCubes(enemy, boxPlane)){
+        textureOnScreen[enemiesOnScreen.indexOf(enemy)].object.removeFromParent();
+        textureOnScreen.splice(enemiesOnScreen.indexOf(enemy), 1);
         enemiesOnScreen.splice(enemiesOnScreen.indexOf(enemy), 1);
-        scene.remove(enemy);
         dano = 2;
       }
     }
@@ -125,8 +126,9 @@ export function colisions(type, airplaneHp, colisaoAtivada){
         if(shot.type === 3){
           if(detectCollisionCubes(shot, enemy)){
             const indexEnemy = enemiesOnScreen.indexOf(enemy);
+            deadEnemies.push(textureOnScreen[indexEnemy].object);
             enemiesOnScreen.splice(indexEnemy, 1);
-            deadEnemies.push(enemy);
+            textureOnScreen.splice(indexEnemy, 1);
 
             setEnemiesCounter();
 
@@ -147,8 +149,9 @@ export function colisions(type, airplaneHp, colisaoAtivada){
         if(shot.type === 4 && enemy.type == 'grd'){
           if(detectCollisionCubes(shot, enemy)){
             const indexEnemy = enemiesOnScreen.indexOf(enemy);
+            deadEnemies.push(textureOnScreen[indexEnemy].object);
             enemiesOnScreen.splice(indexEnemy, 1);
-            deadEnemies.push(enemy);
+            textureOnScreen.splice(indexEnemy, 1);
 
             setEnemiesCounter();
 

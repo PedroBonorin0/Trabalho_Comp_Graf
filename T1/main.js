@@ -43,7 +43,7 @@ var airPlaneMaterial = new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"}
 // create a airPlane ------------------------------------------------------------------------------------------------------------
 var loader = new GLTFLoader();
 var airPlane;
-loader.load('./assets/F-16D.gltf', function ( glft ) {
+loader.load('./assets/x-wing.gltf', function ( glft ) {
   airPlane = glft.scene;
   airPlane.name = 'F-16D';
   airPlane.scale.set(1.25,1.25,1.25);
@@ -58,7 +58,7 @@ loader.load('./assets/F-16D.gltf', function ( glft ) {
 });
 
 var deadAirPlane;
-loader.load('./assets/F-16D.gltf', function ( glft ){
+loader.load('./assets/x-wing.gltf', function ( glft ){
   deadAirPlane = glft.scene;
   deadAirPlane.name = 'DEAD';
   deadAirPlane.scale.set(1.25,1.25,1.25);

@@ -36,7 +36,7 @@ export function moveEnemies() {
         aux.object.rotateY(enemy.spin);
       }
   
-      if(enemy.position.z > 100 || enemy.position.x < -100 || enemy.position.x > 100) {
+      if(enemy.position.z > 300 || enemy.position.x < -300 || enemy.position.x > 300) {
         enemy.removeFromParent();
 
         const indexToRemove = enemiesOnScreen.indexOf(enemy);
@@ -56,7 +56,78 @@ function generateEnemyVertical(type, x, z) {
 
   let loader = new GLTFLoader();
 
-  loader.load( './assets/enemy1.gltf', function ( gltf ) {
+    if(type === 'air') {
+      loader.load( './assets/t-figther.gltf', function ( gltf ) {
+        let obj = gltf.scene;
+        obj.traverse( function ( child ) {
+          if ( child.isMesh ) {
+              child.castShadow = true;
+          }
+        });
+        newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+        newEnemy.speedX = 0;
+        newEnemy.speedZ = 1;
+        newEnemy.position.set(x, 36, z);
+        newEnemy.type = 'air';
+
+        obj.scale.set(2.0, 2.0, 2.0);
+        asset.object = gltf.scene;
+        asset.object.position.set(x, 36, z);
+        obj.position.set(x, 36, z);
+
+        newEnemy.canShot = true;
+    
+        enemiesOnScreen.push(newEnemy);
+        enemiesOnScreenCounter++;
+
+        textureOnScreen.push(asset);
+        
+        newEnemy.isArch = false;
+
+        scene.add(obj);
+      }, null, null);
+    } else {
+      loader.load( './assets/droid-tank.gltf', function ( gltf ) {
+        let obj = gltf.scene;
+        obj.traverse( function ( child ) {
+          if ( child.isMesh ) {
+              child.castShadow = true;
+          }
+        });
+        newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+        newEnemy.speedX = 0;
+        newEnemy.speedZ = 0.5;
+        newEnemy.position.set(x, 10, z);
+        newEnemy.type = 'grd';
+        obj.scale.set(0.3, 0.3, 0.3);
+        asset.object = gltf.scene;
+        asset.object.position.set(x, 10, z);
+        obj.position.set(x, 10, z);
+
+        newEnemy.canShot = true;
+    
+        enemiesOnScreen.push(newEnemy);
+        enemiesOnScreenCounter++;
+
+        textureOnScreen.push(asset);
+        
+        newEnemy.isArch = false;
+
+        scene.add(obj);
+      }, null, null);
+    }
+}
+
+function generateEnemyHorizontal(type, x, z, side) {
+  var newEnemy;
+  let asset = {
+    object: null,
+    loaded: false,
+  }
+  
+  let loader = new GLTFLoader();
+
+  loader.load( './assets/t-advanced.gltf', function ( gltf ) {
     let obj = gltf.scene;
     obj.traverse( function ( child ) {
       if ( child.isMesh ) {
@@ -65,26 +136,167 @@ function generateEnemyVertical(type, x, z) {
     });
     if(type === 'air') {
       newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
-      newEnemy.speedX = 0;
-      newEnemy.speedZ = 1;
-      newEnemy.position.set(x, 36, z);
       newEnemy.type = 'air';
+      
+      if(side === 'dir')
+        newEnemy.speedX = -0.8;
+        else
+        newEnemy.speedX = 0.8;
+        
+        newEnemy.speedZ = 0;
+        newEnemy.position.set(x, 36, z);
 
-      //obj.rotateY(3.14);
+        obj.scale.set(1.25, 1.25, 1.25);
+        asset.object = gltf.scene;
+        asset.object.position.set(x, 36, z);
+        obj.position.set(x, 36, z);
+      } else {
+        newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+        newEnemy.type = 'grd';
+        
+        if(side === 'dir')
+        newEnemy.speedX = -0.8;
+        else
+        newEnemy.speedX = 0.8;
+        
+        newEnemy.speedZ = 0;
+        newEnemy.position.set(x, 10, z);
+
+        obj.scale.set(1.25, 1.25, 1.25);
+        asset.object = gltf.scene;
+        asset.object.position.set(x, 10, z);
+        obj.position.set(x, 10, z);
+      }
+
+      newEnemy.canShot = true;
+      
+      enemiesOnScreen.push(newEnemy);
+      enemiesOnScreenCounter++;
+
+      textureOnScreen.push(asset);
+      
+      newEnemy.isArch = false;
+
+      scene.add(obj);
+    }, null, null);
+  }
+  
+  function generateEnemyDiagonal(type, x, z, hor, vert) {
+  var newEnemy;
+  let asset = {
+    object: null,
+    loaded: false,
+  }
+
+  let loader = new GLTFLoader();
+
+  loader.load( './assets/t-fighter.gltf', function ( gltf ) {
+    let obj = gltf.scene;
+    obj.traverse( function ( child ) {
+      if ( child.isMesh ) {
+          child.castShadow = true;
+      }
+    });
+    if(type === 'air') {
+      newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+      newEnemy.type = 'air';
+      if(hor === 'dir')
+      newEnemy.speedX = 0.75;
+      else
+      newEnemy.speedX = -0.75;
+      
+      if(vert === 'up')
+      newEnemy.speedZ = -0.75;
+      else
+      newEnemy.speedZ = 0.75;
+      
+      newEnemy.position.set(x, 36, z);
+
       asset.object = gltf.scene;
       asset.object.position.set(x, 36, z);
       obj.position.set(x, 36, z);
     } else {
       newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
-      newEnemy.speedX = 0;
-      newEnemy.speedZ = 0.5;
-      newEnemy.position.set(x, 10, z);
       newEnemy.type = 'grd';
       
+      if(hor === 'dir')
+      newEnemy.speedX = 0.25;
+      else
+      newEnemy.speedX = -0.25;
+      
+      if(vert === 'up')
+      newEnemy.speedZ = -0.5;
+      else
+      newEnemy.speedZ = 0.5;
+      
+      newEnemy.position.set(x, 10, z);
+
       asset.object = gltf.scene;
       asset.object.position.set(x, 10, z);
       obj.position.set(x, 10, z);
     }
+    
+    newEnemy.canShot = true;
+
+    enemiesOnScreen.push(newEnemy);
+    enemiesOnScreenCounter++;
+
+    textureOnScreen.push(asset);
+    
+    newEnemy.isArch = false;
+    scene.add(obj);
+  }, null, null);
+}
+
+function generateEnemyArco(type, x, z, rot) {
+  var newEnemy;
+  let asset = {
+    object: null,
+    loaded: false,
+  }
+
+  let loader = new GLTFLoader();
+
+  loader.load( './assets/seeker.gltf', function ( gltf ) {
+    let obj = gltf.scene;
+    obj.traverse( function ( child ) {
+      if ( child.isMesh ) {
+          child.castShadow = true;
+      }
+    });
+  
+    if(type === 'air') {
+      newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
+      newEnemy.type = 'air';
+      
+      newEnemy.speedX = 0;
+      newEnemy.speedZ = -1;
+      
+      if(rot === 'dir')
+        newEnemy.spin = 1 * (Math.PI/180) / 4;
+      else
+        newEnemy.spin = -1 * (Math.PI/180) / 4;
+      
+      newEnemy.position.set(x, 36, z);
+
+      obj.scale.set(3,3,3);
+      asset.object = gltf.scene;
+      asset.object.position.set(x, 36, z);
+      obj.position.set(x, 36, z);
+    } else {
+      newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+      newEnemy.type = 'grd';
+      newEnemy.speedX = 0;
+      newEnemy.speedZ = 0.5;
+
+      newEnemy.position.set(x, 10, z);
+
+      obj.scale.set(3,3,3);
+      asset.object = gltf.scene;
+      asset.object.position.set(x, 10, z);
+      obj.position.set(x, 10, z);
+    }
+
     newEnemy.canShot = true;
     
     enemiesOnScreen.push(newEnemy);
@@ -92,132 +304,23 @@ function generateEnemyVertical(type, x, z) {
 
     textureOnScreen.push(asset);
     
-    newEnemy.isArch = false;
-
+    newEnemy.isArch = true;
     scene.add(obj);
   }, null, null);
-}
-
-function generateEnemyHorizontal(type, x, z, side) {
-  var newEnemy;
-  
-  if(type === 'air') {
-    newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
-    newEnemy.type = 'air';
-    
-    if(side === 'dir')
-      newEnemy.speedX = -0.8;
-      else
-      newEnemy.speedX = 0.8;
-      
-      newEnemy.speedZ = 0;
-      newEnemy.position.set(x, 36, z);
-    } else {
-      newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
-      newEnemy.type = 'ground';
-      
-      if(side === 'dir')
-      newEnemy.speedX = -0.8;
-      else
-      newEnemy.speedX = 0.8;
-      
-      newEnemy.speedZ = 0;
-      newEnemy.position.set(x, 10, z);
-    }
-
-    newEnemy.canShot = true;
-    
-    enemiesOnScreen.push(newEnemy);
-    enemiesOnScreenCounter++;
-    
-    newEnemy.isArch = false;
-    scene.add(newEnemy);
-  }
-  
-  function generateEnemyDiagonal(type, x, z, hor, vert) {
-  var newEnemy;
-  if(type === 'air') {
-    newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
-    newEnemy.type = 'air';
-    if(hor === 'dir')
-    newEnemy.speedX = 0.75;
-    else
-    newEnemy.speedX = -0.75;
-    
-    if(vert === 'up')
-    newEnemy.speedZ = -0.75;
-    else
-    newEnemy.speedZ = 0.75;
-    
-    newEnemy.position.set(x, 36, z);
-  } else {
-    newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
-    newEnemy.type = 'ground';
-    
-    if(hor === 'dir')
-    newEnemy.speedX = 0.25;
-    else
-    newEnemy.speedX = -0.25;
-    
-    if(vert === 'up')
-    newEnemy.speedZ = -0.5;
-    else
-    newEnemy.speedZ = 0.5;
-    
-    newEnemy.position.set(x, 10, z);
-  }
-  
-  newEnemy.canShot = true;
-
-  enemiesOnScreen.push(newEnemy);
-  enemiesOnScreenCounter++;
-  
-  newEnemy.isArch = false;
-  scene.add(newEnemy);
-}
-
-function generateEnemyArco(type, x, z, rot) {
-  var newEnemy;
-  
-  if(type === 'air') {
-    newEnemy = new THREE.Mesh(enemyGeometryAir, enemyMaterialAir);
-    newEnemy.type = 'air';
-    
-    newEnemy.speedX = 0;
-    newEnemy.speedZ = -1;
-    
-    if(rot === 'dir')
-      newEnemy.spin = -1 * (Math.PI/180) / 4;
-    else
-      newEnemy.spin = 1 * (Math.PI/180) / 4;
-    
-    newEnemy.position.set(x, 36, z);
-  } else {
-    newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
-    newEnemy.type = 'ground';
-    newEnemy.speedX = 0;
-    newEnemy.speedZ = 0.5;
-
-    newEnemy.position.set(x, 10, z);
-  }
-
-  newEnemy.canShot = true;
-  
-  enemiesOnScreen.push(newEnemy);
-  enemiesOnScreenCounter++;
-  
-  newEnemy.isArch = true;
-  scene.add(newEnemy);
 }
 
 
 // auxiliar functions ---------------------------------------------------------------------------------------------------------------
 export function clearEnemies(){
   for(const enemy of enemiesOnScreen){
+    const index = enemiesOnScreen.indexOf(enemy);
     enemy.removeFromParent();
+    textureOnScreen[index].object.removeFromParent();
   }
   enemiesOnScreen = [];
   enemiesOnScreenCounter = 0;
+
+  textureOnScreen = [];
 }
 
 export function setEnemiesCounter(){  
@@ -227,6 +330,8 @@ export function setEnemiesCounter(){
 export function resetEnemies () {
   enemiesOnScreen = [];
   enemiesOnScreenCounter = 0;
+
+  textureOnScreen = [];
 }
 
 export function resetEnemiesShot(){
