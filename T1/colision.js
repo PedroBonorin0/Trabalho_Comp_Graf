@@ -1,3 +1,4 @@
+import * as THREE from  'three';
 import { setEnemiesCounter, textureOnScreen } from './enemiesLogic.js';
 import { setCanCreateShot } from './playerLogic.js';
 import { scene } from './main.js';
@@ -15,6 +16,12 @@ var deadEnemies = [];
 var deadPlayer = [];
 
 var set = false;
+
+var audioLoader = new THREE.AudioLoader();
+var listener = new THREE.AudioListener();
+
+var enemyExplodeSound = new THREE.Audio(listener);
+var playerExplodeSound = new THREE.Audio(listener);
 
 export function detectCollisionCubes(object1, object2){
     object1.geometry.computeBoundingBox();
@@ -76,6 +83,15 @@ export function colisions(type, airplaneHp, colisaoAtivada){
       lifeOnScreen.splice(0, 1);
     }        
     
+    audioLoader.load('./sounds/playerExplode.mp3', function(buffer) {
+      playerExplodeSound.setBuffer(buffer);
+      playerExplodeSound.setLoop(false);
+      if(playerExplodeSound.isPlaying){
+        playerExplodeSound.stop();
+      }
+      playerExplodeSound.play();
+    });
+    
     deadAirPlane.position.set(boxPlane.position.x, boxPlane.position.y, boxPlane.position.z);
     airPlane.removeFromParent();
     deadPlayer.push(deadAirPlane);
@@ -125,6 +141,16 @@ export function colisions(type, airplaneHp, colisaoAtivada){
         if(shot.type === 3){
           if(detectCollisionCubes(shot, enemy)){
             const indexEnemy = enemiesOnScreen.indexOf(enemy);
+
+            audioLoader.load('./sounds/enemyExplode.mp3', function(buffer) {
+              enemyExplodeSound.setBuffer(buffer);
+              enemyExplodeSound.setLoop(false);
+              if(enemyExplodeSound.isPlaying){
+                enemyExplodeSound.stop();
+              }
+              enemyExplodeSound.play();
+            });
+
             deadEnemies.push(textureOnScreen[indexEnemy].object);
             enemiesOnScreen.splice(indexEnemy, 1);
             textureOnScreen.splice(indexEnemy, 1);
@@ -147,6 +173,16 @@ export function colisions(type, airplaneHp, colisaoAtivada){
       for(const shot of shots){
         if(shot.type === 4 && enemy.type == 'grd'){
           if(detectCollisionCubes(shot, enemy)){
+
+            audioLoader.load('./sounds/enemyExplode.mp3', function(buffer) {
+              enemyExplodeSound.setBuffer(buffer);
+              enemyExplodeSound.setLoop(false);
+              if(enemyExplodeSound.isPlaying){
+                enemyExplodeSound.stop();
+              }
+              enemyExplodeSound.play();
+            });
+
             const indexEnemy = enemiesOnScreen.indexOf(enemy);
             deadEnemies.push(textureOnScreen[indexEnemy].object);
             enemiesOnScreen.splice(indexEnemy, 1);

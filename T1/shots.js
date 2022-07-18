@@ -8,19 +8,35 @@ import * as THREE from  'three';
  */
 
 var shots = [];
-
 var shotsCounter = 0;
+
+var audioLoader = new THREE.AudioLoader();
+var listener = new THREE.AudioListener();
+
+var enemyShotSound = new THREE.Audio(listener);
+var playerShotSound = new THREE.Audio(listener);
+
 
 export function buildShot(scn, enemy, player, type){
   if(type === 1){
     if(enemy.canShot){
       enemy.canShot = false;
       var newShot = new THREE.Mesh(
-        new THREE.SphereGeometry(0.8, 10, 10),
-        new THREE.MeshLambertMaterial({color: "rgb(255, 0, 0)"})
+        new THREE.SphereGeometry(0.8, 0.8, 10),
+        new THREE.MeshPhongMaterial({color: "rgb(255, 0, 0)", shininess: "1000", specular:"rgb(255,255,255)"})
       );
+
       newShot.rodou = false;
       newShot.type = 1;
+
+      audioLoader.load('./sounds/enemyShot.mp3', function(buffer) {
+        enemyShotSound.setBuffer(buffer);
+        enemyShotSound.setLoop(false);
+        if(enemyShotSound.isPlaying){
+          enemyShotSound.stop();
+        }
+        enemyShotSound.play();
+      });
 
       newShot.position.set(enemy.position.x, enemy.position.y, enemy.position.z);
       newShot.lookAt(player.position);
@@ -60,12 +76,22 @@ export function buildShot(scn, enemy, player, type){
     if(player.canShot) {
       player.canShot = false;
       var newShot = new THREE.Mesh(
-        new THREE.SphereGeometry(0.8, 10, 10),
-        new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"})
+        new THREE.CylinderGeometry(0.3, 0.3, 5, 10),
+        new THREE.MeshPhongMaterial({color: "rgb(0, 255, 0)", shininess: "1000", specular:"rgb(255,255,255)"})
       );
+      newShot.rotateX(3.14/2);
 
       newShot.rodou = false;
       newShot.type = 3;
+
+      audioLoader.load('./sounds/playerShot.mp3', function(buffer) {
+        playerShotSound.setBuffer(buffer);
+        playerShotSound.setLoop(false);
+        if(playerShotSound.isPlaying){
+          playerShotSound.stop();
+        }
+        playerShotSound.play();
+      });
 
       newShot.position.set(player.position.x, player.position.y, player.position.z);
       scn.add(newShot);
@@ -133,7 +159,7 @@ export function moveShots(){
     }
 
     if(shot.type === 3){
-      shot.translateZ(-2);
+      shot.translateY(-2);
       if(shot.position.z < -190){
         shot.removeFromParent();
         const indexToRemove = shots.indexOf(shot);

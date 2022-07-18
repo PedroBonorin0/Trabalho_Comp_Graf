@@ -1,4 +1,5 @@
 import * as THREE from  'three';
+import { degreesToRadians} from '../libs/util/util.js';
 import { animateDeadEnemies, animateDeadPlayer, colisions} from './colision.js';
 import {inicializeKeyboard, keyboardUpdate} from './playerLogic.js'
 import { enemiesOnScreen, moveEnemies } from './enemiesLogic.js';
@@ -11,6 +12,7 @@ import {initRenderer,
 import { game, jogo, reiniciaJogo, reiniciaJogo2 } from './ondas.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import { createLight } from './ilumination.js';
+import {criaWorld, rotateWorld} from './world.js'
 
 // Inicialização de elelmentos -------------------------------------------------------------------------------------------------- 
 var scene = new THREE.Scene();    // Create main scene
@@ -23,15 +25,53 @@ var scene2 = new THREE.Scene();    // Create second
 scene2.background = new THREE.Color(0xa3a3a3);
 
 // Variáveis Gerais
-let posicaoSomePlano = -8E-14;
-let posicaoCriaPlano = 2E-14;
+//let posicaoSomePlano = -8E-14;
+let posicaoSomePlano = 1000;
+//let posicaoCriaPlano = 2E-14;
+let posicaoCriaPlano = 0;
 let velocidadePlano = -0.5;
 
+var loader = new GLTFLoader();
+
 // create the ground plane ------------------------------------------------------------------------------------------------------
-let plane = generatePlano();
-plane.receiveShadow = true;
-plane.translateY(100);
-scene.add(plane);
+//let plane = generatePlano();
+let plane;
+loader.load('./assets/death-star.gltf', function ( glft ) {
+  plane = glft.scene;
+  plane.name = 'death-star';
+  plane.scale.set(40,15,40);
+  plane.position.set(465, -80,20);
+  //plane.rotateY(-9.45);
+  plane.traverse(function (child) {
+    if(child){
+      child.castShadow = true;
+    }
+  });
+  plane.rotateY(degreesToRadians(90));
+  //scene.add(plane);
+});
+
+var loader = new GLTFLoader();
+
+let outro;
+loader.load('./assets/death-star.gltf', function (glft) {
+  let obj = glft.scene;
+  obj.traverse(function (child) {
+    if(child){
+      child.castShadow = true;
+    }
+  });
+  obj.scale.set(40,15,40);
+  outro = glft.scene;
+  outro.scale.set(40,15,40);
+  outro.position.set(465, -80,20);
+  obj.position.set(465, -80,20);
+  outro.rotateY(degreesToRadians(90));
+});
+
+//plane.receiveShadow = true;
+//plane.translateY(100);
+//scene.add(plane);
 
 // Create CSG HP ----------------------------------------------------------------------------------------------------------------
 var lifeOnScreen = [];
@@ -140,6 +180,7 @@ function controlledRender()
   renderer.render(scene2, virtualCamera);  // Render scene of the virtual camera
 }
 
+criaWorld();
 // render ------------------------------------------------------------------------------------------------------------------------
 render();
 function render()
@@ -156,13 +197,15 @@ function render()
       jogo();
     }
   }
-
+  
   movelife();
     
   moveEnemies();
   
   keyboardUpdate(keyboard, boxPlane, airPlane);
-  worldMovement();
+  //worldMovement();
+  //moveCenario();
+  rotateWorld();
   requestAnimationFrame(render);
   
   atualizaVidas(airplaneHp);
@@ -211,45 +254,91 @@ function render()
 // plane functions ----------------------------------------------------------------------------------------------------------------
 var criaPlano = false;
 var criaPlanoAux = true;
-var planoAux = null;
+//var planoAux = null;
 
 function worldMovement() {
-  if(plane)
-    plane.translateY(velocidadePlano);
-  if(planoAux)
-    planoAux.translateY(velocidadePlano);
+  if(plane !== undefined && planeAux !==undefined){
+    //console.log(plane.position);
+    if(plane)
+      plane.translateX(velocidadePlano);
+    if(planeAux)
+      planeAux.translateX(velocidadePlano);
 
-  if(plane && plane.position.y < posicaoSomePlano) {
-    plane.removeFromParent();
-    plane = null;
-    criaPlano = true;
-  }
+    if(plane && plane.position.z > posicaoSomePlano) {
+      plane.removeFromParent();
+      //plane = null;
+      criaPlano = true;
+    }
 
-  if(planoAux && planoAux.position.y < posicaoSomePlano) {
-    planoAux.removeFromParent();
-    planoAux = null;
-    criaPlanoAux = true;
-  }
+    if(planeAux && planeAux.position.z  > posicaoSomePlano) {
+      planeAux.removeFromParent();
+      planeAux = null;
+      criaPlanoAux = true;
+    }
+      
+    if(criaPlanoAux && plane && plane.position.z > posicaoCriaPlano) {
+    criaPlanoAux = false;
+    //planoAux = generatePlano();
+    planeAux = plane;
+    planeAux.receiveShadow = true;
+    //planoAux.translateY(590);
+    scene.add(planeAux);
+    }
     
-  if(criaPlanoAux && plane && plane.position.y < posicaoCriaPlano) {
-   criaPlanoAux = false;
-   planoAux = generatePlano();
-   planoAux.receiveShadow = true;
-   planoAux.translateY(590);
-   scene.add(planoAux);
+    if(criaPlano && planeAux && planeAux.position.z > posicaoCriaPlano) {
+      criaPlano = false;
+      //plane = generatePlano();
+      planeAux.receiveShadow = true;
+      //plane.translateY(590);
+      scene.add(plane);
+    }
   }
-  
-  if(criaPlano && planoAux && planoAux.position.y < posicaoCriaPlano) {
-    criaPlano = false;
-    plane = generatePlano();
-   planoAux.receiveShadow = true;
-    plane.translateY(590);
-    scene.add(plane);
+}
+
+//var vPlane = true;
+//var vAux = false;
+
+function moveCenario(){
+  //var plano2;
+  if(plane !== undefined && outro !== undefined){
+    if(plane.position.z < 930){
+      plane.translateX(velocidadePlano);
+    }
+    else{
+      plane.removeFromParent();
+    }
+
+    if(outro.position.z < 930){
+      outro.translateX(velocidadePlano);
+    }
+    else{
+      outro.removeFromParent();
+    }
+
+    if(plane.position.z > 180){
+      //outro = outro;
+      outro.position.set(465, -80,-800);
+      scene.add(outro);
+    }
+
+    if(outro.position.z > 180){
+      plane.position.set(465, -80,-800);
+      scene.add(plane);
+    }
   }
 }
 
 function generatePlano() {
   return createGroundPlaneWired(500, 500);
+}
+
+function generateCube(x, y, z){
+  var geometry = new THREE.BoxGeometry(80,30,500);
+  var material = new THREE.MeshLambertMaterial();
+  
+  var cube = new THREE.Mesh(geometry, material);
+  cube.position.set(x,y,z);
+  scene.add(cube);
 }
 
 function atualizaVidas(vidas) {
