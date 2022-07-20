@@ -17,19 +17,28 @@ export function keyboardUpdate(kb, obj, airPlane){
    if (kb.pressed("up") && obj.position.y < 36.16 && airPlane != undefined){
        obj.translateY(2);
        airPlane.translateZ(2);
+    }
+    if (kb.pressed("down") && obj.position.y > 35.992 && airPlane != undefined){
+        obj.translateY(-2);
+        airPlane.translateZ(-2);
+    }
+    if (kb.pressed("right") && obj.position.x < 57 && airPlane != undefined){
+        obj.translateX(2);
+        airPlane.position.set(airPlane.position.x + 2, airPlane.position.y, airPlane.position.z);
+        rotateAirplane('dir', airPlane)
+    }
+    if (kb.pressed("left") && obj.position.x > -57 && airPlane != undefined){
+        obj.translateX(-2);
+        airPlane.position.set(airPlane.position.x - 2, airPlane.position.y, airPlane.position.z);
    }
-   if (kb.pressed("down") && obj.position.y > 35.992 && airPlane != undefined){
-       obj.translateY(-2);
-       airPlane.translateZ(-2);
-   }
-   if (kb.pressed("right") && obj.position.x < 57 && airPlane != undefined){
-       obj.translateX(2);
-       airPlane.translateX(-2);
-   }
-   if (kb.pressed("left") && obj.position.x > -57 && airPlane != undefined){
-       obj.translateX(-2);
-       airPlane.translateX(2);
-   }
+}
+
+function rotateAirplane(dir, airPlane) {
+  
+}
+
+function fixRotation(airPlane) {
+  
 }
 
 // Funções de atualização de variáveis ----------------------------------------------------------------
