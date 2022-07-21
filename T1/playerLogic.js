@@ -12,6 +12,14 @@ export function inicializeKeyboard(){
     return keyboard;
 }
 
+function inclination(airPlane){
+    for(var i = 0; i< 3; i++){
+        setTimeout(() => {
+            airPlane.rotateOnWorldAxis(3.14/9);
+          },250);
+    }
+}
+
 export function keyboardUpdate(kb, obj, airPlane){
    kb.update();
    if (kb.pressed("up") && obj.position.y < 36.16 && airPlane != undefined){
