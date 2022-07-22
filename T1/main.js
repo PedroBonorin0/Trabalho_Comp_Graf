@@ -9,16 +9,18 @@ import { buildShot, moveShots } from './shots.js';
 import {initRenderer,
        initCamera,
        onWindowResize} from "../libs/util/util.js";
-import { game, jogo, reiniciaJogo, reiniciaJogo2 } from './ondas.js';
+import { jogo, reiniciaJogo, reiniciaJogo2 } from './ondas.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import { createLight } from './ilumination.js';
 import {criaWorld, rotateWorld} from './world.js'
+import { animateExplosoes } from './colision.js';
 
 // Inicialização de elelmentos -------------------------------------------------------------------------------------------------- 
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
 var camera = initCamera(new THREE.Vector3(0, 100, 140)); // Init camera in this position
 // initDefaultBasicLight(scene);
+createLight(scene);
 createLight(scene);
 
 var scene2 = new THREE.Scene();    // Create second
@@ -246,7 +248,8 @@ function render()
   airplaneHp -= colisions(6, airplaneHp, colisaoAtivada);
 
   moveShots();
- 
+  
+  animateExplosoes();
   animateDeadEnemies();
   animateDeadPlayer(scene);
 }

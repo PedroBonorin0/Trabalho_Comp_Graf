@@ -15,8 +15,8 @@ var canIncrement = true;
 
 export function jogo (){
     if(ondaAtual === 1 && enemiesOnScreen.length === 0){
-        generateEnemyVertical('air', -45, -250);
-        generateEnemyVertical('air', -20, -300);
+        generateEnemyVertical('air', -10, -250);
+        generateEnemyVertical('air', 10, -300);
         generateEnemyVertical('grd', -30, -300);
         generateEnemyVertical('grd', 30, -300);
         ondaAtual = 2;
