@@ -12,6 +12,8 @@ import { MeshLambertMaterial } from '../build/three.module.js';
 //var sphere = new THREE.Mesh(sphereGeometry);
 //sphere.position.set(0,0,0);
 
+//-- SET WATER SHADER -----------------------------------------------------------------------------
+
 // create a texture
 var textureLoader = new THREE.TextureLoader();
 var texture = textureLoader.load('./assets/textures/deathstar.jpg');
