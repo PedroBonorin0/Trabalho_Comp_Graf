@@ -87,7 +87,7 @@ loader.load('./assets/x-wing.gltf', function ( glft ) {
   airPlane = glft.scene;
   airPlane.name = 'F-16D';
   airPlane.scale.set(1.25,1.25,1.25);
-  airPlane.rotateY(-9.45);
+  airPlane.rotateY(degreesToRadians(180));
   airPlane.position.set(0.0, 36,80);
   airPlane.traverse(function (child) {
     if(child){
