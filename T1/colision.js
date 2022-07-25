@@ -2,18 +2,17 @@ import * as THREE from  'three';
 import { setEnemiesCounter, textureOnScreen } from './enemiesLogic.js';
 import { setCanCreateShot } from './playerLogic.js';
 import { scene } from './main.js';
-import { enemiesOnScreen, clearEnemies} from './enemiesLogic.js';
-import { shots, clearShots, decrementaShots } from './shots.js';
+import { enemiesOnScreen } from './enemiesLogic.js';
+import { shots, decrementaShots } from './shots.js';
 import { airPlane, 
          boxPlane,
          deadAirPlane,
-         lifeOnScreen,
-         finalizaGame,
-         setHp } from './main.js';
-import {reiniciaJogo, setOnda} from './ondas.js';
+         lifeOnScreen,} from './main.js';
+import { createGroundPlane } from '../libs/util/util.js';
 
 var deadEnemies = [];
 var deadPlayer = [];
+var explosionsOnScreen = [];
 
 var set = false;
 
@@ -22,6 +21,8 @@ var listener = new THREE.AudioListener();
 
 var enemyExplodeSound = new THREE.Audio(listener);
 var playerExplodeSound = new THREE.Audio(listener);
+
+var textureLoader = new THREE.TextureLoader();
 
 export function detectCollisionCubes(object1, object2){
     object1.geometry.computeBoundingBox();
@@ -141,7 +142,6 @@ export function colisions(type, airplaneHp, colisaoAtivada){
         if(shot.type === 3){
           if(detectCollisionCubes(shot, enemy)){
             const indexEnemy = enemiesOnScreen.indexOf(enemy);
-
             audioLoader.load('./sounds/enemyExplode.mp3', function(buffer) {
               enemyExplodeSound.setBuffer(buffer);
               enemyExplodeSound.setLoop(false);
@@ -150,30 +150,32 @@ export function colisions(type, airplaneHp, colisaoAtivada){
               }
               enemyExplodeSound.play();
             });
-
+            
             deadEnemies.push(textureOnScreen[indexEnemy].object);
             enemiesOnScreen.splice(indexEnemy, 1);
             textureOnScreen.splice(indexEnemy, 1);
-
+            
             setEnemiesCounter();
-
+            
             shot.removeFromParent();
             const indexShot = shots.indexOf(shot);
             shots.splice(indexShot, 1);
             decrementaShots();
             setCanCreateShot();
+
+            createExplosion(enemy.position, 'air');
           }   
         }
       }
     }
   }
-
+  
   if(type === 5){
     for(const enemy of enemiesOnScreen){
       for(const shot of shots){
         if(shot.type === 4 && enemy.type == 'grd'){
           if(detectCollisionCubes(shot, enemy)){
-
+            
             audioLoader.load('./sounds/enemyExplode.mp3', function(buffer) {
               enemyExplodeSound.setBuffer(buffer);
               enemyExplodeSound.setLoop(false);
@@ -182,19 +184,21 @@ export function colisions(type, airplaneHp, colisaoAtivada){
               }
               enemyExplodeSound.play();
             });
-
+            
             const indexEnemy = enemiesOnScreen.indexOf(enemy);
             deadEnemies.push(textureOnScreen[indexEnemy].object);
             enemiesOnScreen.splice(indexEnemy, 1);
             textureOnScreen.splice(indexEnemy, 1);
-
+            
             setEnemiesCounter();
-
+            
             shot.removeFromParent();
             const indexShot = shots.indexOf(shot);
             shots.splice(indexShot, 1);
             decrementaShots();
             setCanCreateShot();
+
+            createExplosion(enemy.position, 'ground');
           }   
         }
       }
@@ -212,6 +216,51 @@ export function colisions(type, airplaneHp, colisaoAtivada){
   }
 
   return dano;
+}
+
+function createExplosion(position, type) {
+  if(type === 'air')
+    var planeGeometry = new THREE.PlaneBufferGeometry(10, 10, 100, 100);
+    else
+    var planeGeometry = new THREE.PlaneBufferGeometry(15, 15, 100, 100);
+
+  planeGeometry.clearGroups();
+  planeGeometry.addGroup( 0, Infinity, 0 );
+  // planeGeometry.addGroup( 0, Infinity, 1 );
+
+  var textura1 = textureLoader.load('./assets/textures/1.png');
+
+  var planeMaterial = new THREE.MeshBasicMaterial({
+    map: textura1,
+    transparent: true, 
+  });
+
+  var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.receiveShadow = true;
+  
+  plane.position.set(position.x, position.y, position.z);
+
+  var objExplosion = {
+    plane,
+    img: 1,
+    delay: true,
+  }
+
+  explosionsOnScreen.push(objExplosion);
+  scene.add(plane);
+}
+
+export function animateExplosoes() {
+  for(const explosion of explosionsOnScreen) {
+      if(explosion.img === 16) {
+        explosion.plane.removeFromParent();
+        explosionsOnScreen.splice(explosionsOnScreen.indexOf(explosion), 1);
+      } else {
+        explosion.img++;
+      }
+      var textura = textureLoader.load(`./assets/textures/${explosion.img}.png`);
+      explosion.plane.material.map = textura;
+  }
 }
 
 export {
