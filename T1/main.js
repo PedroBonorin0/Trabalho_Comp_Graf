@@ -14,6 +14,7 @@ import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import { createLight } from './ilumination.js';
 import {criaWorld, rotateWorld} from './world.js'
 import { animateExplosoes } from './colision.js';
+import { Water } from '../build/jsm/objects/Water.js';  // Water shader in here
 
 // Inicialização de elelmentos -------------------------------------------------------------------------------------------------- 
 var scene = new THREE.Scene();    // Create main scene
@@ -27,31 +28,37 @@ var scene2 = new THREE.Scene();    // Create second
 scene2.background = new THREE.Color(0xa3a3a3);
 
 // Variáveis Gerais
-//let posicaoSomePlano = -8E-14;
-let posicaoSomePlano = 1000;
-//let posicaoCriaPlano = 2E-14;
-let posicaoCriaPlano = 0;
+let posicaoSomePlano = -8E-14;
+let posicaoCriaPlano = 2E-14;
 let velocidadePlano = -0.5;
 
 var loader = new GLTFLoader();
 
 // create the ground plane ------------------------------------------------------------------------------------------------------
-//let plane = generatePlano();
-let plane;
-loader.load('./assets/death-star.gltf', function ( glft ) {
-  plane = glft.scene;
-  plane.name = 'death-star';
-  plane.scale.set(40,15,40);
-  plane.position.set(465, -80,20);
-  //plane.rotateY(-9.45);
-  plane.traverse(function (child) {
-    if(child){
-      child.castShadow = true;
-    }
-  });
-  plane.rotateY(degreesToRadians(90));
-  //scene.add(plane);
-});
+let plane = generatePlano();
+plane.translateY(100);
+scene.add(plane);
+
+//-- SET WATER SHADER -----------------------------------------------------------------------------
+const waterGeometry = new THREE.PlaneGeometry( 500, 600 );
+
+// Water shader parameters
+let water = new Water(
+  waterGeometry,
+  {
+    textureWidth: 512,
+    textureHeight: 512,
+    waterNormals: new THREE.TextureLoader().load( '../assets/textures/waternormals.jpg', function ( texture ) {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    } ),
+    sunDirection: new THREE.Vector3(),
+    sunColor: 0xffffff,
+    waterColor: 0x001e0f,
+    distortionScale: 3.7,
+  }
+);
+water.rotation.x = - Math.PI / 2;
+scene.add( water );
 
 var loader = new GLTFLoader();
 
@@ -182,7 +189,7 @@ function controlledRender()
   renderer.render(scene2, virtualCamera);  // Render scene of the virtual camera
 }
 
-criaWorld();
+//criaWorld();
 // render ------------------------------------------------------------------------------------------------------------------------
 render();
 function render()
@@ -205,9 +212,9 @@ function render()
   moveEnemies();
   
   keyboardUpdate(keyboard, boxPlane, airPlane);
-  //worldMovement();
+  worldMovement();
   //moveCenario();
-  rotateWorld();
+  //rotateWorld();
   requestAnimationFrame(render);
   
   atualizaVidas(airplaneHp);
@@ -257,42 +264,42 @@ function render()
 // plane functions ----------------------------------------------------------------------------------------------------------------
 var criaPlano = false;
 var criaPlanoAux = true;
-//var planoAux = null;
+var planoAux = null;
 
 function worldMovement() {
-  if(plane !== undefined && planeAux !==undefined){
+  if(plane){
     //console.log(plane.position);
     if(plane)
-      plane.translateX(velocidadePlano);
-    if(planeAux)
-      planeAux.translateX(velocidadePlano);
+      plane.translateY(velocidadePlano);
+    if(planoAux)
+      planoAux.translateY(velocidadePlano);
 
-    if(plane && plane.position.z > posicaoSomePlano) {
+    if(plane && plane.position.y < posicaoSomePlano) {
       plane.removeFromParent();
-      //plane = null;
+      plane = null;
       criaPlano = true;
     }
 
-    if(planeAux && planeAux.position.z  > posicaoSomePlano) {
-      planeAux.removeFromParent();
-      planeAux = null;
+    if(planoAux && planoAux.position.y  < posicaoSomePlano) {
+      planoAux.removeFromParent();
+      planoAux = null;
       criaPlanoAux = true;
     }
       
-    if(criaPlanoAux && plane && plane.position.z > posicaoCriaPlano) {
+    if(criaPlanoAux && plane && plane.position.y < posicaoCriaPlano) {
     criaPlanoAux = false;
-    //planoAux = generatePlano();
-    planeAux = plane;
-    planeAux.receiveShadow = true;
-    //planoAux.translateY(590);
-    scene.add(planeAux);
+    planoAux = generatePlano();
+    //planoAux = plane;
+    planoAux.receiveShadow = true;
+    planoAux.translateY(590);
+    scene.add(planoAux);
     }
     
-    if(criaPlano && planeAux && planeAux.position.z > posicaoCriaPlano) {
+    if(criaPlano && planoAux && planoAux.position.y < posicaoCriaPlano) {
       criaPlano = false;
-      //plane = generatePlano();
-      planeAux.receiveShadow = true;
-      //plane.translateY(590);
+      plane = generatePlano();
+      planoAux.receiveShadow = true;
+      plane.translateY(590);
       scene.add(plane);
     }
   }
@@ -305,7 +312,7 @@ function moveCenario(){
   //var plano2;
   if(plane !== undefined && outro !== undefined){
     if(plane.position.z < 930){
-      plane.translateX(velocidadePlano);
+      plane.translateY(velocidadePlano);
     }
     else{
       plane.removeFromParent();
