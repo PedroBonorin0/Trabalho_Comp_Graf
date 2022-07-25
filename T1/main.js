@@ -53,8 +53,6 @@ loader.load('./assets/death-star.gltf', function ( glft ) {
   //scene.add(plane);
 });
 
-var loader = new GLTFLoader();
-
 let outro;
 loader.load('./assets/death-star.gltf', function (glft) {
   let obj = glft.scene;
@@ -83,7 +81,6 @@ var airPlaneGeometry = new THREE.ConeGeometry(4, 8, 20);
 var airPlaneMaterial = new THREE.MeshLambertMaterial({color: "rgb(0, 250, 100)"});
 
 // create a airPlane ------------------------------------------------------------------------------------------------------------
-var loader = new GLTFLoader();
 var airPlane;
 loader.load('./assets/x-wing.gltf', function ( glft ) {
   airPlane = glft.scene;

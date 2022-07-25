@@ -3,12 +3,11 @@ import { setEnemiesCounter, textureOnScreen } from './enemiesLogic.js';
 import { setCanCreateShot } from './playerLogic.js';
 import { scene } from './main.js';
 import { enemiesOnScreen } from './enemiesLogic.js';
-import { shots, decrementaShots } from './shots.js';
+import { shots, decrementaShots, removeGrenade } from './shots.js';
 import { airPlane, 
          boxPlane,
          deadAirPlane,
          lifeOnScreen,} from './main.js';
-import { createGroundPlane } from '../libs/util/util.js';
 
 var deadEnemies = [];
 var deadPlayer = [];
@@ -199,6 +198,8 @@ export function colisions(type, airplaneHp, colisaoAtivada){
             setCanCreateShot();
 
             createExplosion(enemy.position, 'ground');
+
+            removeGrenade(shot.name);
           }   
         }
       }
@@ -224,10 +225,6 @@ function createExplosion(position, type) {
     else
     var planeGeometry = new THREE.PlaneBufferGeometry(15, 15, 100, 100);
 
-  planeGeometry.clearGroups();
-  planeGeometry.addGroup( 0, Infinity, 0 );
-  // planeGeometry.addGroup( 0, Infinity, 1 );
-
   var textura1 = textureLoader.load('./assets/textures/1.png');
 
   var planeMaterial = new THREE.MeshBasicMaterial({
@@ -236,7 +233,7 @@ function createExplosion(position, type) {
   });
 
   var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.receiveShadow = true;
+  plane.receiveShadow = true;
   
   plane.position.set(position.x, position.y, position.z);
 

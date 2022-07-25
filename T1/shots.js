@@ -1,4 +1,5 @@
 import * as THREE from  'three';
+import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 
 /**
  * type == 1: Inimigo Aereo;
@@ -9,6 +10,7 @@ import * as THREE from  'three';
 
 var shots = [];
 var shotsCounter = 0;
+var shotsOnScreen = [];
 
 var audioLoader = new THREE.AudioLoader();
 var listener = new THREE.AudioListener();
@@ -16,6 +18,7 @@ var listener = new THREE.AudioListener();
 var enemyShotSound = new THREE.Audio(listener);
 var playerShotSound = new THREE.Audio(listener);
 
+var loader = new GLTFLoader();
 
 export function buildShot(scn, enemy, player, type){
   if(type === 1){
@@ -107,6 +110,7 @@ export function buildShot(scn, enemy, player, type){
   if(type === 4){
     if(player.canMissel) {
       player.canMissel = false;
+
       var newShot = new THREE.Mesh(
         new THREE.CylinderGeometry(0.5, 1, 5, 10),
         new THREE.MeshLambertMaterial({color: "rgb(255, 0, 0)"})
@@ -117,9 +121,36 @@ export function buildShot(scn, enemy, player, type){
 
       newShot.position.set(player.position.x, player.position.y, player.position.z);
       newShot.rotateX(-3.14/2);
-      scn.add(newShot);
+      const name = Math.random();
+      newShot.name = name;
+      
       shotsCounter++;
       shots.push(newShot);
+      
+      var asset = {
+        object: null,
+        loaded: false,
+      };
+      
+      loader.load( './assets/grenade.glb', function ( gltf ) {
+        let obj = gltf.scene;
+        obj.traverse( function ( child ) {
+          if ( child.isMesh ) {
+            child.castShadow = true;
+          }
+        });
+        
+        obj.scale.set(1, 1, 1);
+        asset.object = gltf.scene;
+        asset.object.position.set(newShot.position.x, newShot.position.y, newShot.position.z);
+        asset.object.rotateX(-3.14/2);
+        asset.object.name = name;
+        obj.position.set(newShot.position.x, newShot.position.y, newShot.position.z);
+        
+        shotsOnScreen.push(asset);
+        
+        scn.add(obj);
+      }, null, null);
 
       setTimeout(() => {
         player.canMissel = true;
@@ -130,6 +161,7 @@ export function buildShot(scn, enemy, player, type){
 
 export function moveShots(){
   for(const shot of shots){
+
     if(shot.type === 1){
       shot.translateZ(1.2);
       if(shot.position.z < -90) { 
@@ -169,13 +201,26 @@ export function moveShots(){
     }
 
     if(shot.type === 4){
-      shot.translateY(1);
-      shot.rotateX(-1 * (Math.PI/180) / 2);
-      if(shot.position.x > 110 || shot.position.y > 110 || shot.position.z > 110){
-        shot.removeFromParent();
-        const indexToRemove = shots.indexOf(shot);
-        shots.splice(indexToRemove, 1);
-        shotsCounter--;
+      const index = shotsOnScreen.findIndex(st => st.object.name === shot.name);
+      const aux = shotsOnScreen[index];
+
+      if(aux !== undefined && aux.object) {
+        shot.translateY(1);
+        shot.rotateX(-1 * (Math.PI/180) / 2);
+
+        aux.object.translateY(1);
+        aux.object.rotateX(-1 * (Math.PI/180) / 2);
+
+        if(shot.position.x > 110 || shot.position.y > 110 || shot.position.z > 110){
+          shot.removeFromParent();
+          aux.object.removeFromParent();
+
+          const indexToRemove = shots.indexOf(shot);
+          shots.splice(indexToRemove, 1);
+          shotsCounter--;
+          
+          shotsOnScreen.splice(index, 1);
+        }
       }
     }
   }
@@ -187,6 +232,13 @@ export function clearShots(){
   }
   shots = [];
   shotsCounter = 0;
+}
+
+export function removeGrenade(name) {
+  const index = shotsOnScreen.findIndex(st => st.object.name === name);
+  const aux = shotsOnScreen[index];
+
+  aux.object.removeFromParent();
 }
 
 export function decrementaShots(){
