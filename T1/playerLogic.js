@@ -58,7 +58,6 @@ function rotateAirplane(direction, airPlane) {
   if(airPlane !== undefined && direction === 'dir' && rotaDir < 5){
     airPlane.rotateZ(degreesToRadians(5));
     rotaDir = rotaDir + 1;
-    console.log(rotaDir);
   }
 
   if(airPlane !== undefined && direction === 'esq' && rotaEsq < 5){
@@ -68,19 +67,14 @@ function rotateAirplane(direction, airPlane) {
 }
 
 function fixRotation(direction, airPlane) {
-  if(airPlane !== undefined && direction === 'dir'){
+  if(airPlane !== undefined && direction === 'dir' && rotaDir>0){
     airPlane.rotateZ(degreesToRadians(-5));
     rotaDir--;
   }
 
-  if(airPlane !== undefined && direction === 'esq'){
+  if(airPlane !== undefined && direction === 'esq' && rotaEsq>0){
     airPlane.rotateZ(degreesToRadians(5));
     rotaEsq--;
-  }
-
-  if(rotaDir <= 0 || rotaEsq <= 0){
-    rotaDir = 0;
-    rotaEsq = 0;
   }
 }
 
