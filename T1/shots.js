@@ -56,18 +56,46 @@ export function buildShot(scn, enemy, player, type){
   if(type === 2){
     if(enemy.canShot){
       enemy.canShot = false;
+      
       var newShot = new THREE.Mesh(
         new THREE.CylinderGeometry(1.0, 2, 10, 10),
         new THREE.MeshLambertMaterial({color: "rgb(255, 0, 0)"})
       );
-
+      
       newShot.rodou = false;
       newShot.type = 2;
-
+      
       newShot.position.set(enemy.position.x, enemy.position.y, enemy.position.z);
-      scn.add(newShot);
+      const name = Math.random();
+      newShot.name = name;
+
       shotsCounter++;
       shots.push(newShot);
+
+      var asset = {
+        object: null,
+        loaded: false,
+      };
+
+      loader.load( './assets/bullet.glb', function ( gltf ) {
+        let obj = gltf.scene;
+        obj.traverse( function ( child ) {
+          if ( child.isMesh ) {
+            child.castShadow = true;
+          }
+        });
+        
+        obj.scale.set(6, 6, 6);
+        asset.object = gltf.scene;
+        asset.object.position.set(newShot.position.x, newShot.position.y, newShot.position.z);
+        asset.object.name = name;
+        obj.position.set(newShot.position.x, newShot.position.y, newShot.position.z);
+        
+        shotsOnScreen.push(asset);
+        
+        scn.add(obj);
+        scn.add(newShot);
+      }, null, null);
 
       setTimeout(() => {
         enemy.canShot = true;
@@ -161,6 +189,13 @@ export function buildShot(scn, enemy, player, type){
 
 export function moveShots(){
   for(const shot of shots){
+    var index;
+    var aux;
+
+    if(shot.type === 2 || shot.type === 4) {
+      index = shotsOnScreen.findIndex(st => st.object.name === shot.name);
+      aux = shotsOnScreen[index];
+    }
 
     if(shot.type === 1){
       shot.translateZ(1.2);
@@ -175,19 +210,26 @@ export function moveShots(){
     if(shot.type === 2){
       if(shot.position.y < 36){
           shot.translateY(1.2);
+          aux.object.translateY(1.2);
       } else{
         if(!shot.rodou){
           shot.rotateX(90 * (Math.PI/180));
+          aux.object.rotateX(90 * (Math.PI/180));
         }
         shot.rodou = true;
         shot.translateY(1.2);
+        aux.object.translateY(1.2);
       }
       if(shot.position.y > 60){
         shot.removeFromParent();
+        aux.object.removeFromParent();
         const indexToRemove = shots.indexOf(shot);
         shots.splice(indexToRemove, 1);
         shotsCounter--;
+
+        shotsOnScreen.splice(index, 1);
       }
+      shotsOnScreen[index];
     }
 
     if(shot.type === 3){
@@ -201,9 +243,6 @@ export function moveShots(){
     }
 
     if(shot.type === 4){
-      const index = shotsOnScreen.findIndex(st => st.object.name === shot.name);
-      const aux = shotsOnScreen[index];
-
       if(aux !== undefined && aux.object) {
         shot.translateY(1);
         shot.rotateX(-1 * (Math.PI/180) / 2);
@@ -230,11 +269,16 @@ export function clearShots(){
   for(const shot of shots){
       shot.removeFromParent();
   }
+  for(const shot of shotsOnScreen) {
+    shot.object.removeFromParent();
+  }
+
   shots = [];
   shotsCounter = 0;
+  shotsOnScreen = [];
 }
 
-export function removeGrenade(name) {
+export function removeShot(name) {
   const index = shotsOnScreen.findIndex(st => st.object.name === name);
   const aux = shotsOnScreen[index];
 

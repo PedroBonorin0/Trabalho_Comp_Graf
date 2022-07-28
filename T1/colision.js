@@ -3,7 +3,7 @@ import { setEnemiesCounter, textureOnScreen } from './enemiesLogic.js';
 import { setCanCreateShot } from './playerLogic.js';
 import { scene } from './main.js';
 import { enemiesOnScreen } from './enemiesLogic.js';
-import { shots, decrementaShots, removeGrenade } from './shots.js';
+import { shots, decrementaShots, removeShot } from './shots.js';
 import { airPlane, 
          boxPlane,
          deadAirPlane,
@@ -107,6 +107,8 @@ export function colisions(type, airplaneHp, colisaoAtivada){
         textureOnScreen.splice(enemiesOnScreen.indexOf(enemy), 1);
         enemiesOnScreen.splice(enemiesOnScreen.indexOf(enemy), 1);
         dano = 2;
+
+        createExplosion(enemy.position, type);
       }
     }
   }
@@ -118,6 +120,8 @@ export function colisions(type, airplaneHp, colisaoAtivada){
           shots.splice(shots.indexOf(shot), 1);
           scene.remove(shot);
           dano = 1;
+
+          createExplosion(shot.position, type);
         }
       }
     }
@@ -130,6 +134,10 @@ export function colisions(type, airplaneHp, colisaoAtivada){
           shots.splice(shots.indexOf(shot), 1);
           scene.remove(shot);
           dano = 2;
+
+          removeShot(shot.name);
+
+          createExplosion(shot.position, type);
         }
       }
     }
@@ -162,7 +170,7 @@ export function colisions(type, airplaneHp, colisaoAtivada){
             decrementaShots();
             setCanCreateShot();
 
-            createExplosion(enemy.position, 'air');
+            createExplosion(enemy.position, type);
           }   
         }
       }
@@ -197,9 +205,9 @@ export function colisions(type, airplaneHp, colisaoAtivada){
             decrementaShots();
             setCanCreateShot();
 
-            createExplosion(enemy.position, 'ground');
+            createExplosion(enemy.position, type);
 
-            removeGrenade(shot.name);
+            removeShot(shot.name);
           }   
         }
       }
@@ -220,9 +228,26 @@ export function colisions(type, airplaneHp, colisaoAtivada){
 }
 
 function createExplosion(position, type) {
-  if(type === 'air')
+/**
+ * tipo 1: Player x Inimigo
+ * tip2 2: Player x TiroAereo
+ * tipo 3: Player x TiroTerrestre
+ * tipo 4: TiroPlayer x InimigoAereo
+ * tipo 5: MisselPlayer x InimigoTerrestre
+ */
+  if(type === 1)
     var planeGeometry = new THREE.PlaneBufferGeometry(10, 10, 100, 100);
-    else
+
+  if(type === 2)
+    var planeGeometry = new THREE.PlaneBufferGeometry(4, 4, 100, 100);
+
+  if(type === 3)
+    var planeGeometry = new THREE.PlaneBufferGeometry(6, 6, 100, 100);
+
+  if(type === 4)
+    var planeGeometry = new THREE.PlaneBufferGeometry(10, 10, 100, 100);
+
+  if(type === 5)
     var planeGeometry = new THREE.PlaneBufferGeometry(15, 15, 100, 100);
 
   var textura1 = textureLoader.load('./assets/textures/1.png');
