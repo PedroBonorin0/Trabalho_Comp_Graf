@@ -36,12 +36,15 @@ export function moveEnemies() {
         aux.object.rotateY(enemy.spin);
       }
   
-      if(enemy.position.z > 300 || enemy.position.x < -300 || enemy.position.x > 300) {
+      if(enemy.position.z > 120 || enemy.position.x < -300 || enemy.position.x > 300) {
         enemy.removeFromParent();
+        aux.object.removeFromParent();
 
         const indexToRemove = enemiesOnScreen.indexOf(enemy);
         enemiesOnScreen.splice(indexToRemove, 1);
         enemiesOnScreenCounter--;
+
+        textureOnScreen.splice(indexToRemove);
       }
     }
   }
