@@ -94,7 +94,6 @@ export function buildShot(scn, enemy, player, type){
         shotsOnScreen.push(asset);
         
         scn.add(obj);
-        scn.add(newShot);
       }, null, null);
 
       setTimeout(() => {

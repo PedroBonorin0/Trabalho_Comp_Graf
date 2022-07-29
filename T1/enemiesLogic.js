@@ -51,6 +51,7 @@ export function moveEnemies() {
 }
 
 function generateEnemyVertical(type, x, z) {
+  enemiesOnScreenCounter++;
   var newEnemy;
   let asset = {
     object: null,
@@ -61,6 +62,7 @@ function generateEnemyVertical(type, x, z) {
 
     if(type === 'air') {
       loader.load( './assets/t-figther.gltf', function ( gltf ) {
+        console.log('ta carregando')
         let obj = gltf.scene;
         obj.traverse( function ( child ) {
           if ( child.isMesh ) {
@@ -81,7 +83,6 @@ function generateEnemyVertical(type, x, z) {
         newEnemy.canShot = true;
     
         enemiesOnScreen.push(newEnemy);
-        enemiesOnScreenCounter++;
 
         textureOnScreen.push(asset);
         
@@ -110,7 +111,6 @@ function generateEnemyVertical(type, x, z) {
         newEnemy.canShot = true;
     
         enemiesOnScreen.push(newEnemy);
-        enemiesOnScreenCounter++;
 
         textureOnScreen.push(asset);
         
@@ -122,6 +122,7 @@ function generateEnemyVertical(type, x, z) {
 }
 
 function generateEnemyHorizontal(type, x, z, side) {
+  enemiesOnScreenCounter++;
   var newEnemy;
   let asset = {
     object: null,
@@ -174,7 +175,6 @@ function generateEnemyHorizontal(type, x, z, side) {
       newEnemy.canShot = true;
       
       enemiesOnScreen.push(newEnemy);
-      enemiesOnScreenCounter++;
 
       textureOnScreen.push(asset);
       
@@ -184,7 +184,8 @@ function generateEnemyHorizontal(type, x, z, side) {
     }, null, null);
   }
   
-  function generateEnemyDiagonal(type, x, z, hor, vert) {
+function generateEnemyDiagonal(type, x, z, hor, vert) {
+  enemiesOnScreenCounter++;
   var newEnemy;
   let asset = {
     object: null,
@@ -242,7 +243,6 @@ function generateEnemyHorizontal(type, x, z, side) {
     newEnemy.canShot = true;
 
     enemiesOnScreen.push(newEnemy);
-    enemiesOnScreenCounter++;
 
     textureOnScreen.push(asset);
     
@@ -252,6 +252,7 @@ function generateEnemyHorizontal(type, x, z, side) {
 }
 
 function generateEnemyArco(type, x, z, rot) {
+  enemiesOnScreenCounter++;
   var newEnemy;
   let asset = {
     object: null,
@@ -303,7 +304,6 @@ function generateEnemyArco(type, x, z, rot) {
     newEnemy.canShot = true;
     
     enemiesOnScreen.push(newEnemy);
-    enemiesOnScreenCounter++;
 
     textureOnScreen.push(asset);
     

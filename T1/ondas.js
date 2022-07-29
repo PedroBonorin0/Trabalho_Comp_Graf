@@ -1,9 +1,9 @@
-import * as THREE from  'three';
 import { generateEnemyVertical,
          generateEnemyHorizontal,
          generateEnemyDiagonal,
          generateEnemyArco,
          enemiesOnScreen,
+         enemiesOnScreenCounter,
         clearEnemies } from './enemiesLogic.js';
 import {clearShots} from './shots.js';
 import { generateLife } from './lifeCSG.js';
@@ -14,48 +14,65 @@ var createOnda = true;
 var canIncrement = true;
 
 export function jogo (){
-    if(ondaAtual === 1 && enemiesOnScreen.length === 0){
-        generateEnemyVertical('air', -10, -250);
-        generateEnemyVertical('air', 10, -300);
-        generateEnemyVertical('grd', -30, -300);
-        generateEnemyVertical('grd', 30, -300);
-        ondaAtual = 2;
-    }
+  console.log('inimigos', enemiesOnScreenCounter);
+  console.log('onda', ondaAtual);
 
-    if(ondaAtual === 2 && enemiesOnScreen.length === 0){
-        ondaAtual = 3;
-    }
+  if(enemiesOnScreenCounter > 0)
+    return;
 
-    if(ondaAtual === 3 && enemiesOnScreen.length === 0){
-        ondaAtual = 4;
-    }
+  if(ondaAtual === 1){
+      generateEnemyVertical('air', -10, -250);
+      generateEnemyVertical('air', 10, -300);
+      generateEnemyVertical('grd', -30, -300);
+      generateEnemyVertical('grd', 30, -300);
+      ondaAtual = 2;
+      return;
+  }
 
-    if(ondaAtual === 4 && enemiesOnScreen.length === 0){
-        ondaAtual = 5;
-    }
+  if(ondaAtual === 2){
+    generateEnemyVertical('air', -30, -300);
+    generateEnemyVertical('air', 30, -250);
+    ondaAtual = 3;
+    return;
+  }
 
-    if(ondaAtual === 5 && enemiesOnScreen.length === 0){
-        ondaAtual = 6;
-    }
+  if(ondaAtual === 3){
+      ondaAtual = 4;
+      return;
+  }
 
-    if(ondaAtual === 6 && enemiesOnScreen.length === 0){
-        ondaAtual = 7;
-    }
+  if(ondaAtual === 4){
+      ondaAtual = 5;
+      return;
+  }
 
-    if(ondaAtual === 7 && enemiesOnScreen.length === 0){
-        ondaAtual = 8;
-    }
+  if(ondaAtual === 5){
+      ondaAtual = 6;
+      return;
+  }
 
-    if(ondaAtual === 8 && enemiesOnScreen.length === 0){
-        ondaAtual = 9;
-    }
+  if(ondaAtual === 6){
+      ondaAtual = 7;
+      return;
+  }
 
-    if(ondaAtual === 9 && enemiesOnScreen.length === 0){
-        ondaAtual = 10;
-    }
+  if(ondaAtual === 7){
+      ondaAtual = 8;
+      return;
+  }
 
-    if(ondaAtual === 10 && enemiesOnScreen.length === 0){
-    }
+  if(ondaAtual === 8){
+      ondaAtual = 9;
+      return;
+  }
+
+  if(ondaAtual === 9){
+      ondaAtual = 10;
+      return;
+  }
+
+  if(ondaAtual === 10){
+  }
 }
 
 export function reiniciaJogo(){
