@@ -1,5 +1,6 @@
 import * as THREE from  'three';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
+import { enemiesOnScreen } from './enemiesLogic.js';
 
 /**
  * type == 1: Inimigo Aereo;
@@ -12,6 +13,9 @@ var shots = [];
 var shotsCounter = 0;
 var shotsOnScreen = [];
 
+var clickOnPrevFrame = false;
+var taSegurando = false;
+
 var audioLoader = new THREE.AudioLoader();
 var listener = new THREE.AudioListener();
 
@@ -20,7 +24,35 @@ var playerShotSound = new THREE.Audio(listener);
 
 var loader = new GLTFLoader();
 
-export function buildShot(scn, enemy, player, type){
+
+export function playerShoot(scn, player, keyboard) {
+  console.log('Click', clickOnPrevFrame);
+
+  if(keyboard.pressed("ctrl")){
+    buildShot(scn, null, player, 3);
+    if(clickOnPrevFrame)
+      taSegurando = true;
+    else
+      taSegurando = false;
+
+    clickOnPrevFrame = true;
+  } else {
+    clickOnPrevFrame = false;
+  }
+  
+  if(keyboard.pressed("space") && player.canMissel)
+    buildShot(scn, null, player, 4);
+
+  for(const enemy of enemiesOnScreen){
+    if(enemy.type === 'air' && enemy.canShot)
+      buildShot(scn, enemy, player, 1);
+
+    if(enemy.type === 'grd' && enemy.canShot)
+      buildShot(scn, enemy, player, 2);
+  }
+}
+
+function buildShot(scn, enemy, player, type, click){
   if(type === 1){
     if(enemy.canShot){
       enemy.canShot = false;
@@ -103,6 +135,9 @@ export function buildShot(scn, enemy, player, type){
   }
 
   if(type === 3){
+    if(!taSegurando)
+      player.canShot = true;
+
     if(player.canShot) {
       player.canShot = false;
       var newShot = new THREE.Mesh(
@@ -130,7 +165,7 @@ export function buildShot(scn, enemy, player, type){
 
       setTimeout(() => {
         player.canShot = true;
-      }, 250);
+      }, 500);
     }
   }
 

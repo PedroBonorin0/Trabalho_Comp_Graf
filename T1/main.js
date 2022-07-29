@@ -4,7 +4,7 @@ import { animateDeadEnemies, animateDeadPlayer, colisions} from './colision.js';
 import {inicializeKeyboard, keyboardUpdate} from './playerLogic.js'
 import { enemiesOnScreen, moveEnemies } from './enemiesLogic.js';
 import { generateLife, movelife } from './lifeCSG.js';
-import { buildShot, moveShots } from './shots.js';
+import { playerShoot, moveShots } from './shots.js';
 import {initRenderer,
        initCamera,
        onWindowResize} from "../libs/util/util.js";
@@ -245,15 +245,6 @@ function render()
     
     controlledRender();
     
-    if(keyboard.pressed("ctrl") && boxPlane.canShot){
-      buildShot(scene, null, boxPlane, 3);
-    }
-    
-    if(keyboard.pressed("space") && boxPlane.canMissel){
-      console.log('missel');
-      buildShot(scene, null, boxPlane, 4);
-    }
-    
     if(keyboard.pressed("G") && canSwitchGodMode) {
       canSwitchGodMode = false;
       colisaoAtivada = !colisaoAtivada;
@@ -263,14 +254,8 @@ function render()
       }, 100);
     }
     
-    for(const enemy of enemiesOnScreen){
-      if(enemy.type === 'air' && enemy.canShot){
-        buildShot(scene, enemy, boxPlane, 1);
-      }
-      if(enemy.type === 'grd' && enemy.canShot){
-        buildShot(scene, enemy, boxPlane, 2);
-      }
-    }
+    playerShoot(scene, boxPlane, keyboard);
+
     airplaneHp -= colisions(1, airplaneHp, colisaoAtivada);
     airplaneHp -= colisions(2, airplaneHp, colisaoAtivada);
     airplaneHp -= colisions(3, airplaneHp, colisaoAtivada);
