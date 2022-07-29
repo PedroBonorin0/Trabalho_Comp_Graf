@@ -206,7 +206,7 @@ export function moveShots(){
       }
     }
 
-    if(shot.type === 2){
+    if(shot.type === 2 && aux !== undefined){
       if(shot.position.y < 36){
           shot.translateY(1.2);
           aux.object.translateY(1.2);

@@ -68,7 +68,8 @@ let water;
   water.rotateZ (degreesToRadians(180));
   scene.add(water);
 // create the ground plane ------------------------------------------------------------------------------------------------------
-let plane = generatePlano();
+//let plane = generatePlano();
+let plane = generateTerrain();
 //plane.translateZ(100);
 scene.add(plane);
 
@@ -215,6 +216,8 @@ function render()
     }, 500);
   }
 
+  keyboardUpdate(keyboard, boxPlane, airPlane);
+
   if(pause) {
     requestAnimationFrame(render);
   } else {
@@ -236,7 +239,6 @@ function render()
   
     water.material.uniforms[ 'time' ].value = water.material.uniforms[ 'time' ].value - 0.05;
     
-    keyboardUpdate(keyboard, boxPlane, airPlane);
     worldMovement();
     //moveCenario();
     //rotateWorld();
@@ -298,28 +300,28 @@ function worldMovement() {
     if(planoAux)
       planoAux.translateZ(-velocidadePlano);
 
-    if(plane && plane.position.z > posicaoSomePlano) {
+    if(plane && plane.position.y> posicaoSomePlano) {
       plane.removeFromParent();
       plane = null;
       criaPlano = true;
     }
 
-    if(planoAux && planoAux.position.z  > posicaoSomePlano) {
+    if(planoAux && planoAux.position.y > posicaoSomePlano) {
       planoAux.removeFromParent();
       planoAux = null;
       criaPlanoAux = true;
     }
       
-    if(criaPlanoAux && plane && plane.position.z > posicaoCriaPlano) {
+    if(criaPlanoAux && plane && plane.position.y> posicaoCriaPlano) {
     criaPlanoAux = false;
-    planoAux = generatePlano();
+    planoAux = generateTerrain();
     planoAux.translateZ(-499);
     scene.add(planoAux);
     }
     
-    if(criaPlano && planoAux && planoAux.position.z > posicaoCriaPlano) {
+    if(criaPlano && planoAux && planoAux.position.y> posicaoCriaPlano) {
       criaPlano = false;
-      plane = generatePlano();
+      plane = generateTerrain();
       plane.translateZ(-499);
       scene.add(plane);
     }
@@ -428,6 +430,105 @@ function generatePlano() {
   cube1.position.set(0,0,-100);
 
   return cube1;
+}
+
+function generateTerrain(){
+  var textureLoader = new THREE.TextureLoader();
+  var grass = textureLoader.load('./assets/textures/grama.jpg');
+  var rock = textureLoader.load('./assets/textures/terra.jpg');
+  var areia = textureLoader.load('./assets/textures/areia.jpg');
+  
+  var geometry1 = new THREE.PlaneBufferGeometry(120,500, 10, 10);
+  var geometry2 = new THREE.PlaneBufferGeometry(40,500, 10, 10);
+  var geometry3 = new THREE.PlaneBufferGeometry(240,500, 10, 10);
+
+  const vertex1 = new THREE.Vector3();
+  const positionAttribute1 = geometry1.getAttribute('position');
+  for(var i=0; i<positionAttribute1.count; i++){
+      var x = positionAttribute1.getX( i );
+			var y = positionAttribute1.getY( i );
+			var z = positionAttribute1.getZ( i );
+
+			z += Math.random() * 0;
+			
+			positionAttribute1.setXYZ( i, x, y, z );
+  }
+
+  const vertex2 = new THREE.Vector3();
+  const positionAttribute2 = geometry2.getAttribute('position');
+  for(var i=0; i<positionAttribute2.count; i++){
+    var x = positionAttribute2.getX( i );
+    var y = positionAttribute2.getY( i );
+    var z = positionAttribute2.getZ( i );
+
+    z += Math.random() * 10;
+    
+    positionAttribute2.setXYZ( i, x, y, z );
+  }
+
+  const vertex3 = new THREE.Vector3();
+  const positionAttribute3 = geometry3.getAttribute('position');
+  for(var i=0; i<positionAttribute3.count; i++){
+    var x = positionAttribute3.getX( i );
+    var y = positionAttribute3.getY( i );
+    var z = positionAttribute3.getZ( i );
+
+    z += Math.random() * 10;
+    
+    positionAttribute3.setXYZ( i, x, y, z );
+  }
+
+  var material1 = new THREE.MeshLambertMaterial();
+  var material2 = new THREE.MeshLambertMaterial();
+  var material3 = new THREE.MeshLambertMaterial();
+
+  material1.map = areia;
+  material1.map.wrapS = THREE.RepeatWrapping;
+  material1.map.wrapT = THREE.RepeatWrapping;
+  material1.map.minFilter = THREE.LinearFilter;
+  material1.map.magFilter = THREE.NearestFilter;
+
+  material2.map = rock;
+  material2.map.wrapS = THREE.RepeatWrapping;
+  material2.map.wrapT = THREE.RepeatWrapping;
+  material2.map.minFilter = THREE.LinearFilter;
+  material2.map.magFilter = THREE.NearestFilter;
+
+  material3.map = grass;
+  material3.map.wrapS = THREE.RepeatWrapping;
+  material3.map.wrapT = THREE.RepeatWrapping;
+  material3.map.minFilter = THREE.LinearFilter;
+  material3.map.magFilter = THREE.NearestFilter;
+  
+  var cube1 = new THREE.Mesh(geometry1, material1);
+  var cube2 = new THREE.Mesh(geometry2, material2);
+  var cube3 = new THREE.Mesh(geometry2, material2);
+  var cube4 = new THREE.Mesh(geometry3, material3);
+  var cube5 = new THREE.Mesh(geometry3, material3);
+
+  cube1.add(cube2, cube3, cube4, cube5);
+
+  cube1.rotateX(degreesToRadians(-90));
+  //cube1.translateY(-10);
+
+  cube2.translateX(-70);
+  cube2.translateY(2);
+  cube2.rotateY(degreesToRadians(-10));
+
+  cube3.translateX(70);
+  cube3.translateY(2);
+  cube3.rotateY(degreesToRadians(10));
+
+  cube4.translateY(7);
+  cube4.translateX(207);
+
+  cube5.translateY(7);
+  cube5.translateX(-207);
+
+  cube1.position.set(0,0,-100);
+
+  scene.add(cube1);
+  //return cube1;
 }
 
 function generateCube(x, y, z){
