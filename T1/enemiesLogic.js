@@ -143,9 +143,9 @@ function generateEnemyHorizontal(type, x, z, side) {
       newEnemy.type = 'air';
       
       if(side === 'dir')
-        newEnemy.speedX = -0.8;
-        else
         newEnemy.speedX = 0.8;
+      else
+        newEnemy.speedX = -0.8;
         
         newEnemy.speedZ = 0;
         newEnemy.position.set(x, 36, z);
@@ -154,23 +154,23 @@ function generateEnemyHorizontal(type, x, z, side) {
         asset.object = gltf.scene;
         asset.object.position.set(x, 36, z);
         obj.position.set(x, 36, z);
-      } else {
-        newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
-        newEnemy.type = 'grd';
-        
-        if(side === 'dir')
-        newEnemy.speedX = -0.8;
-        else
+    } else {
+      newEnemy = new THREE.Mesh(enemyGeometryGround, enemyMaterialGround);
+      newEnemy.type = 'grd';
+      
+      if(side === 'dir')
         newEnemy.speedX = 0.8;
-        
-        newEnemy.speedZ = 0;
-        newEnemy.position.set(x, 10, z);
+      else
+        newEnemy.speedX = -0.8;
+      
+      newEnemy.speedZ = 0;
+      newEnemy.position.set(x, 10, z);
 
-        obj.scale.set(1.25, 1.25, 1.25);
-        asset.object = gltf.scene;
-        asset.object.position.set(x, 10, z);
-        obj.position.set(x, 10, z);
-      }
+      obj.scale.set(1.25, 1.25, 1.25);
+      asset.object = gltf.scene;
+      asset.object.position.set(x, 10, z);
+      obj.position.set(x, 10, z);
+    }
 
       newEnemy.canShot = true;
       
@@ -194,7 +194,7 @@ function generateEnemyDiagonal(type, x, z, hor, vert) {
 
   let loader = new GLTFLoader();
 
-  loader.load( './assets/t-fighter.gltf', function ( gltf ) {
+  loader.load( './assets/t-advanced.gltf', function ( gltf ) {
     let obj = gltf.scene;
     obj.traverse( function ( child ) {
       if ( child.isMesh ) {
@@ -261,7 +261,7 @@ function generateEnemyArco(type, x, z, rot) {
 
   let loader = new GLTFLoader();
 
-  loader.load( './assets/seeker.gltf', function ( gltf ) {
+  loader.load( './assets/t-advanced.gltf', function ( gltf ) {
     let obj = gltf.scene;
     obj.traverse( function ( child ) {
       if ( child.isMesh ) {
@@ -277,13 +277,13 @@ function generateEnemyArco(type, x, z, rot) {
       newEnemy.speedZ = -1;
       
       if(rot === 'dir')
-        newEnemy.spin = 1 * (Math.PI/180) / 4;
-      else
         newEnemy.spin = -1 * (Math.PI/180) / 4;
+      else
+        newEnemy.spin = 1 * (Math.PI/180) / 4;
       
       newEnemy.position.set(x, 36, z);
 
-      obj.scale.set(3,3,3);
+      obj.scale.set(1.25, 1.25, 1.25);
       asset.object = gltf.scene;
       asset.object.position.set(x, 36, z);
       obj.position.set(x, 36, z);
@@ -295,7 +295,7 @@ function generateEnemyArco(type, x, z, rot) {
 
       newEnemy.position.set(x, 10, z);
 
-      obj.scale.set(3,3,3);
+      obj.scale.set(1.25, 1.25, 1.25);
       asset.object = gltf.scene;
       asset.object.position.set(x, 10, z);
       obj.position.set(x, 10, z);

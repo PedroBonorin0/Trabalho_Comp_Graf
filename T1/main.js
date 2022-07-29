@@ -198,78 +198,93 @@ function controlledRender()
   renderer.render(scene2, virtualCamera);  // Render scene of the virtual camera
 }
 
+var pause = false;
+var canClick = true;
 //criaWorld();
 // render ------------------------------------------------------------------------------------------------------------------------
 render();
 function render()
-{   
-
-  if(keyboard.pressed('enter')){
-    reiniciaJogo();
-  }
-  else{
-    if(airplaneHp <= 0){
-      reiniciaJogo2();
-    }
-    else{
-      jogo();
-    }
-  }
-  
-  movelife();
-    
-  moveEnemies();
-
-  water.material.uniforms[ 'time' ].value = water.material.uniforms[ 'time' ].value - 0.05;
-  
-  keyboardUpdate(keyboard, boxPlane, airPlane);
-  worldMovement();
-  //moveCenario();
-  //rotateWorld();
-  requestAnimationFrame(render);
-  
-  atualizaVidas(airplaneHp);
-  
-  controlledRender();
-  
-  if(keyboard.pressed("ctrl") && boxPlane.canShot){
-    buildShot(scene, null, boxPlane, 3);
-  }
-  
-  if(keyboard.pressed("space") && boxPlane.canMissel){
-    console.log('missel');
-    buildShot(scene, null, boxPlane, 4);
-  }
-  
-  if(keyboard.pressed("G") && canSwitchGodMode) {
-    canSwitchGodMode = false;
-    colisaoAtivada = !colisaoAtivada;
+{
+  console.log('entrou', pause)
+  if(keyboard.pressed('P') && canClick){
+    canClick = false;
+    pause = !pause;
 
     setTimeout(() => {
-      canSwitchGodMode = true;
-    }, 100);
+      canClick = true;
+    }, 500);
   }
-  
-  for(const enemy of enemiesOnScreen){
-    if(enemy.type === 'air' && enemy.canShot){
-      buildShot(scene, enemy, boxPlane, 1);
-    }
-    if(enemy.type === 'grd' && enemy.canShot){
-      buildShot(scene, enemy, boxPlane, 2);
-    }
-  }
-  airplaneHp -= colisions(1, airplaneHp, colisaoAtivada);
-  airplaneHp -= colisions(2, airplaneHp, colisaoAtivada);
-  airplaneHp -= colisions(3, airplaneHp, colisaoAtivada);
-  colisions(4, airplaneHp, colisaoAtivada);
-  colisions(5, airplaneHp, colisaoAtivada);
-  airplaneHp -= colisions(6, airplaneHp, colisaoAtivada);
 
-  moveShots();
+  if(pause) {
+    requestAnimationFrame(render);
+  } else {
+    if(keyboard.pressed('enter')){
+      reiniciaJogo();
+    }
+    else{
+      if(airplaneHp <= 0){
+        reiniciaJogo2();
+      }
+      else{
+        jogo();
+      }
+    }
+    
+    movelife();
+      
+    moveEnemies();
   
-  animateExplosoes();
-  animateDeadEnemies();
-  animateDeadPlayer(scene);
+    water.material.uniforms[ 'time' ].value = water.material.uniforms[ 'time' ].value - 0.05;
+    
+    keyboardUpdate(keyboard, boxPlane, airPlane);
+    worldMovement();
+    //moveCenario();
+    //rotateWorld();
+    requestAnimationFrame(render);
+    
+    atualizaVidas(airplaneHp);
+    
+    controlledRender();
+    
+    if(keyboard.pressed("ctrl") && boxPlane.canShot){
+      buildShot(scene, null, boxPlane, 3);
+    }
+    
+    if(keyboard.pressed("space") && boxPlane.canMissel){
+      console.log('missel');
+      buildShot(scene, null, boxPlane, 4);
+    }
+    
+    if(keyboard.pressed("G") && canSwitchGodMode) {
+      canSwitchGodMode = false;
+      colisaoAtivada = !colisaoAtivada;
+  
+      setTimeout(() => {
+        canSwitchGodMode = true;
+      }, 100);
+    }
+    
+    for(const enemy of enemiesOnScreen){
+      if(enemy.type === 'air' && enemy.canShot){
+        buildShot(scene, enemy, boxPlane, 1);
+      }
+      if(enemy.type === 'grd' && enemy.canShot){
+        buildShot(scene, enemy, boxPlane, 2);
+      }
+    }
+    airplaneHp -= colisions(1, airplaneHp, colisaoAtivada);
+    airplaneHp -= colisions(2, airplaneHp, colisaoAtivada);
+    airplaneHp -= colisions(3, airplaneHp, colisaoAtivada);
+    colisions(4, airplaneHp, colisaoAtivada);
+    colisions(5, airplaneHp, colisaoAtivada);
+    airplaneHp -= colisions(6, airplaneHp, colisaoAtivada);
+  
+    moveShots();
+    
+    animateExplosoes();
+    animateDeadEnemies();
+    animateDeadPlayer(scene);
+  }
 }
 
 // plane functions ----------------------------------------------------------------------------------------------------------------

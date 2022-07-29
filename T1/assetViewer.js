@@ -11,8 +11,7 @@ import {initRenderer,
         createGroundPlane,
         getMaxSize,        
         onWindowResize, 
-        degreesToRadians, 
-        lightFollowingCamera} from "../libs/util/util.js";
+        degreesToRadians } from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information

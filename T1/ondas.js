@@ -14,24 +14,23 @@ var createOnda = true;
 var canIncrement = true;
 
 export function jogo (){
-  console.log('inimigos', enemiesOnScreenCounter);
-  console.log('onda', ondaAtual);
-
   if(enemiesOnScreenCounter > 0)
     return;
 
   if(ondaAtual === 1){
-      generateEnemyVertical('air', -10, -250);
-      generateEnemyVertical('air', 10, -300);
-      generateEnemyVertical('grd', -30, -300);
-      generateEnemyVertical('grd', 30, -300);
-      ondaAtual = 2;
-      return;
+    generateEnemyVertical('air', -10, -250);
+    generateEnemyVertical('air', 10, -300);
+    generateEnemyVertical('grd', -30, -300);
+    generateEnemyVertical('grd', 30, -300);
+    ondaAtual = 2;
+    return;
   }
 
   if(ondaAtual === 2){
-    generateEnemyVertical('air', -30, -300);
-    generateEnemyVertical('air', 30, -250);
+    generateEnemyHorizontal('air', 250, 30, 'esq');
+    generateEnemyHorizontal('air', -200, 40, 'dir');
+    generateEnemyDiagonal('air', -150, 20, 'dir', 'up');
+    generateEnemyDiagonal('air', 200, 50, 'esq', 'down');
     ondaAtual = 3;
     return;
   }

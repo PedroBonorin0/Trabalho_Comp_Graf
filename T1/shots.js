@@ -249,7 +249,7 @@ export function moveShots(){
         aux.object.translateY(1);
         aux.object.rotateX(-1 * (Math.PI/180) / 2);
 
-        if(shot.position.x > 110 || shot.position.y > 110 || shot.position.z > 110){
+        if(shot.position.y < -20){
           shot.removeFromParent();
           aux.object.removeFromParent();
 
