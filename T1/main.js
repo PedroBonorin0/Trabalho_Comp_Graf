@@ -286,26 +286,26 @@ function worldMovement() {
     if(planoAux)
       planoAux.translateZ(-velocidadePlano);
 
-    if(plane && plane.position.z > posicaoSomePlano) {
+    if(plane && plane.position.y> posicaoSomePlano) {
       plane.removeFromParent();
       plane = null;
       criaPlano = true;
     }
 
-    if(planoAux && planoAux.position.z  > posicaoSomePlano) {
+    if(planoAux && planoAux.position.y > posicaoSomePlano) {
       planoAux.removeFromParent();
       planoAux = null;
       criaPlanoAux = true;
     }
       
-    if(criaPlanoAux && plane && plane.position.z > posicaoCriaPlano) {
+    if(criaPlanoAux && plane && plane.position.y> posicaoCriaPlano) {
     criaPlanoAux = false;
     planoAux = generateTerrain();
     planoAux.translateZ(-499);
     scene.add(planoAux);
     }
     
-    if(criaPlano && planoAux && planoAux.position.z > posicaoCriaPlano) {
+    if(criaPlano && planoAux && planoAux.position.y> posicaoCriaPlano) {
       criaPlano = false;
       plane = generateTerrain();
       plane.translateZ(-499);
