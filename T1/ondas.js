@@ -11,7 +11,6 @@ import {scene, airPlane, boxPlane, setHp} from './main.js';
 
 var ondaAtual = 1;
 var createOnda = true;
-var canIncrement = true;
 
 export function jogo (){
   if(enemiesOnScreenCounter > 0)

@@ -2,9 +2,8 @@ import * as THREE from  'three';
 import { degreesToRadians} from '../libs/util/util.js';
 import { animateDeadEnemies, animateDeadPlayer, colisions} from './colision.js';
 import {inicializeKeyboard, keyboardUpdate} from './playerLogic.js'
-import { enemiesOnScreen, moveEnemies, setEnemiesCounter } from './enemiesLogic.js';
+import { enemiesOnScreen, moveEnemies } from './enemiesLogic.js';
 import { generateLife, movelife } from './lifeCSG.js';
-import {createGroundPlaneWired } from '../libs/util/util.js';
 import { buildShot, moveShots } from './shots.js';
 import {initRenderer,
        initCamera,
@@ -12,7 +11,6 @@ import {initRenderer,
 import { jogo, reiniciaJogo, reiniciaJogo2 } from './ondas.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import { createLight } from './ilumination.js';
-import {criaWorld, rotateWorld} from './world.js'
 import { animateExplosoes } from './colision.js';
 import { Water } from '../build/jsm/objects/Water.js';  // Water shader in here
 
@@ -28,12 +26,12 @@ var scene2 = new THREE.Scene();    // Create second
 scene2.background = new THREE.Color(0xa3a3a3);
 
 // Variáveis Gerais
-//let posicaoSomePlano = -8E-14;
-//let posicaoCriaPlano = 2E-14;
-//let velocidadePlano = -0.5;
+// let posicaoSomePlano = -8E-14;
+// let posicaoCriaPlano = 2E-14;
+// let velocidadePlano = -0.5;
 
-let posicaoSomePlano = 400;
-let posicaoCriaPlano = -100;
+let posicaoSomePlano = -10;
+let posicaoCriaPlano = -2E-14;
 let velocidadePlano = -0.5;
 
 var loader = new GLTFLoader();
@@ -206,7 +204,6 @@ var canClick = true;
 render();
 function render()
 {
-  console.log('entrou', pause)
   if(keyboard.pressed('P') && canClick){
     canClick = false;
     pause = !pause;
@@ -295,34 +292,42 @@ var criaPlanoAux = true;
 var planoAux = null;
 
 function worldMovement() {
-    if(plane)
-      plane.translateZ(-velocidadePlano);
-    if(planoAux)
-      planoAux.translateZ(-velocidadePlano);
-
-    if(plane && plane.position.y> posicaoSomePlano) {
+  if(plane) {
+    plane.translateY(velocidadePlano);
+    // console.log(plane.position)
+  }
+  if(planoAux) {
+    planoAux.translateY(velocidadePlano);
+    // console.log(planoAux.position)
+  }
+  
+  if(plane && plane.position.y < posicaoSomePlano) {
+      console.log('sumiu plano')
       plane.removeFromParent();
       plane = null;
       criaPlano = true;
     }
-
-    if(planoAux && planoAux.position.y > posicaoSomePlano) {
+    
+    if(planoAux && planoAux.position.y < posicaoSomePlano) {
+      console.log('sumiu aux')
       planoAux.removeFromParent();
       planoAux = null;
       criaPlanoAux = true;
     }
-      
-    if(criaPlanoAux && plane && plane.position.y> posicaoCriaPlano) {
-    criaPlanoAux = false;
-    planoAux = generateTerrain();
-    planoAux.translateZ(-499);
-    scene.add(planoAux);
+    
+    if(criaPlanoAux && plane && plane.position.y < posicaoCriaPlano) {
+      console.log('criou aux')
+      criaPlanoAux = false;
+      planoAux = generateTerrain();
+      planoAux.translateY(50);
+      scene.add(planoAux);
     }
     
-    if(criaPlano && planoAux && planoAux.position.y> posicaoCriaPlano) {
+    if(criaPlano && planoAux && planoAux.position.y < posicaoCriaPlano) {
+      console.log('criou')
       criaPlano = false;
       plane = generateTerrain();
-      plane.translateZ(-499);
+      plane.translateY(50);
       scene.add(plane);
     }
 }
@@ -527,8 +532,8 @@ function generateTerrain(){
 
   cube1.position.set(0,0,-100);
 
-  scene.add(cube1);
-  //return cube1;
+  // scene.add(cube1);
+  return cube1;
 }
 
 function generateCube(x, y, z){
