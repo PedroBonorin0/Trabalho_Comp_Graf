@@ -4,7 +4,10 @@
     <title>Trabalho - Etapa 1</title>
 
     <link rel="shortcut icon" href="../favicon.ico">
-    <link rel="stylesheet" href="../html/resources/default.css">
+    <link rel="stylesheet" href="../T1/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">  
   </head>
 
@@ -15,9 +18,17 @@
     {"imports": {"three": "../build/three.module.js"}} 
   </script>  
 
-  <div id="webgl-output">     
+  <section id="load-tela">
+    <div class = "load-screen" id="load-screen">
+      <div id="loader"></div>
+      <div class = "text"><h3>DÊ INÍCIO A ESSA JORNADA</h3></div>     
+      <button class="button" id="myBtn">START</button>
+    </section>
+
+   <div id="webgl-output">    
     <script type="module" src="main.js"></script>
   </div>
+
 </body>
 
 </html>

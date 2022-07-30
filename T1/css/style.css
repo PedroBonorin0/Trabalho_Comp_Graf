@@ -48,11 +48,12 @@ html, body {
       width: 0;
     }
     to{
-       width: 15.40em;
+       width: 15.45em;
     }
   }
-  
+
 .button:hover {
+  transform: scale(1.2);
   background:linear-gradient(to bottom, rgb(43, 255, 0) 5%,rgb(255, 255, 255) 100%);
 }
 
@@ -78,7 +79,7 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-align: center;
-  animation: pontos 6s steps(60) 1s infinite  both;
+  animation: pontos 6s steps(60)  infinite  both;
   animation-delay: 7500ms;
 }
 
@@ -95,8 +96,9 @@ html, body {
   position: absolute;
   top: 35%;
   left: 50%;
-  margin: -25px 0 0 -25px;
+  margin: -45px 0 0 -45px;
 }
+
 .game{
   font-family:  'Special Elite', cursive;
   color: rgb(255, 0, 0);
@@ -136,3 +138,7 @@ html, body {
     font-size: 0px;
   }
 }
+
+/*---------------------Style joystick-----------------------*/
+
+
