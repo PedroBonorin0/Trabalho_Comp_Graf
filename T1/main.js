@@ -30,7 +30,7 @@ scene2.background = new THREE.Color(0xa3a3a3);
 // let posicaoCriaPlano = 2E-14;
 // let velocidadePlano = -0.5;
 
-let posicaoSomePlano = -10;
+let posicaoSomePlano = -11E-14;
 let posicaoCriaPlano = -2E-14;
 let velocidadePlano = -0.5;
 
@@ -304,7 +304,7 @@ function worldMovement() {
       console.log('criou aux')
       criaPlanoAux = false;
       planoAux = generateTerrain();
-      planoAux.translateY(50);
+      planoAux.translateY(380);
       scene.add(planoAux);
     }
     
@@ -312,7 +312,7 @@ function worldMovement() {
       console.log('criou')
       criaPlano = false;
       plane = generateTerrain();
-      plane.translateY(50);
+      plane.translateY(387);
       scene.add(plane);
     }
 }
@@ -432,18 +432,6 @@ function generateTerrain(){
   var geometry2 = new THREE.PlaneBufferGeometry(40,500, 10, 10);
   var geometry3 = new THREE.PlaneBufferGeometry(240,500, 10, 10);
 
-  const vertex1 = new THREE.Vector3();
-  const positionAttribute1 = geometry1.getAttribute('position');
-  for(var i=0; i<positionAttribute1.count; i++){
-      var x = positionAttribute1.getX( i );
-			var y = positionAttribute1.getY( i );
-			var z = positionAttribute1.getZ( i );
-
-			z += Math.random() * 0;
-			
-			positionAttribute1.setXYZ( i, x, y, z );
-  }
-
   const vertex2 = new THREE.Vector3();
   const positionAttribute2 = geometry2.getAttribute('position');
   for(var i=0; i<positionAttribute2.count; i++){
@@ -451,7 +439,7 @@ function generateTerrain(){
     var y = positionAttribute2.getY( i );
     var z = positionAttribute2.getZ( i );
 
-    z += Math.random() * 10;
+    z += Math.random() * 5;
     
     positionAttribute2.setXYZ( i, x, y, z );
   }
@@ -502,11 +490,11 @@ function generateTerrain(){
   //cube1.translateY(-10);
 
   cube2.translateX(-70);
-  cube2.translateY(2);
+  cube2.translateZ(8);
   cube2.rotateY(degreesToRadians(-10));
 
   cube3.translateX(70);
-  cube3.translateY(2);
+  cube3.translateZ(8);
   cube3.rotateY(degreesToRadians(10));
 
   cube4.translateY(7);
@@ -515,7 +503,7 @@ function generateTerrain(){
   cube5.translateY(7);
   cube5.translateX(-207);
 
-  cube1.position.set(0,0,-100);
+  cube1.position.set(0,0,-150);
 
   // scene.add(cube1);
   return cube1;
