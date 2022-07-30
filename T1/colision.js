@@ -89,6 +89,7 @@ export function colisions(type, airplaneHp, colisaoAtivada){
       if(playerExplodeSound.isPlaying){
         playerExplodeSound.stop();
       }
+      playerExplodeSound.setVolume(0.6);
       playerExplodeSound.play();
     });
     
@@ -108,6 +109,16 @@ export function colisions(type, airplaneHp, colisaoAtivada){
         enemiesOnScreen.splice(enemiesOnScreen.indexOf(enemy), 1);
         dano = 2;
 
+        audioLoader.load('./sounds/playerExplode.mp3', function(buffer) {
+          playerExplodeSound.setBuffer(buffer);
+          playerExplodeSound.setLoop(false);
+          if(playerExplodeSound.isPlaying){
+            playerExplodeSound.stop();
+          }
+          playerExplodeSound.setVolume(0.3);
+          playerExplodeSound.play();
+        });
+
         createExplosion(enemy.position, type);
       }
     }
@@ -120,6 +131,16 @@ export function colisions(type, airplaneHp, colisaoAtivada){
           shots.splice(shots.indexOf(shot), 1);
           scene.remove(shot);
           dano = 1;
+
+          audioLoader.load('./sounds/playerExplode.mp3', function(buffer) {
+            playerExplodeSound.setBuffer(buffer);
+            playerExplodeSound.setLoop(false);
+            if(playerExplodeSound.isPlaying){
+              playerExplodeSound.stop();
+            }
+            playerExplodeSound.setVolume(0.3);
+            playerExplodeSound.play();
+          });
 
           createExplosion(shot.position, type);
         }
@@ -136,6 +157,16 @@ export function colisions(type, airplaneHp, colisaoAtivada){
           dano = 2;
 
           removeShot(shot.name);
+
+          audioLoader.load('./sounds/playerExplode.mp3', function(buffer) {
+            playerExplodeSound.setBuffer(buffer);
+            playerExplodeSound.setLoop(false);
+            if(playerExplodeSound.isPlaying){
+              playerExplodeSound.stop();
+            }
+            playerExplodeSound.setVolume(0.3);
+            playerExplodeSound.play();
+          });
 
           createExplosion(shot.position, type);
         }
@@ -155,6 +186,7 @@ export function colisions(type, airplaneHp, colisaoAtivada){
               if(enemyExplodeSound.isPlaying){
                 enemyExplodeSound.stop();
               }
+              enemyExplodeSound.setVolume(0.6);
               enemyExplodeSound.play();
             });
             
@@ -189,6 +221,7 @@ export function colisions(type, airplaneHp, colisaoAtivada){
               if(enemyExplodeSound.isPlaying){
                 enemyExplodeSound.stop();
               }
+              enemyExplodeSound.setVolume(0.6);
               enemyExplodeSound.play();
             });
             

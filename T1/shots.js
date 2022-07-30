@@ -20,7 +20,10 @@ var audioLoader = new THREE.AudioLoader();
 var listener = new THREE.AudioListener();
 
 var enemyShotSound = new THREE.Audio(listener);
+var enemyMissel = new THREE.Audio(listener);
+
 var playerShotSound = new THREE.Audio(listener);
+var playerMissel = new THREE.Audio(listener);
 
 var loader = new GLTFLoader();
 
@@ -69,6 +72,7 @@ function buildShot(scn, enemy, player, type, click){
         if(enemyShotSound.isPlaying){
           enemyShotSound.stop();
         }
+        enemyShotSound.setVolume(0.4);
         enemyShotSound.play();
       });
 
@@ -115,6 +119,16 @@ function buildShot(scn, enemy, player, type, click){
             child.castShadow = true;
           }
         });
+
+        audioLoader.load('./sounds/missel.mp3', function(buffer) {
+          enemyMissel.setBuffer(buffer);
+          enemyMissel.setLoop(false);
+          if(enemyMissel.isPlaying){
+            enemyMissel.stop();
+          }
+          enemyMissel.setVolume(0.4);
+          enemyMissel.play();
+        });
         
         obj.scale.set(6, 6, 6);
         asset.object = gltf.scene;
@@ -154,6 +168,7 @@ function buildShot(scn, enemy, player, type, click){
         if(playerShotSound.isPlaying){
           playerShotSound.stop();
         }
+        playerShotSound.setVolume(0.4);
         playerShotSound.play();
       });
 
@@ -199,6 +214,16 @@ function buildShot(scn, enemy, player, type, click){
           if ( child.isMesh ) {
             child.castShadow = true;
           }
+        });
+
+        audioLoader.load('./sounds/missel.mp3', function(buffer) {
+          playerMissel.setBuffer(buffer);
+          playerMissel.setLoop(false);
+          if(playerMissel.isPlaying){
+            playerMissel.stop();
+          }
+          playerMissel.setVolume(0.4);
+          playerMissel.play();
         });
         
         obj.scale.set(1, 1, 1);
