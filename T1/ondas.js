@@ -17,59 +17,96 @@ export function jogo (){
     return;
 
   if(ondaAtual === 1){
-    generateEnemyVertical('air', -10, -250);
-    generateEnemyVertical('air', 10, -300);
+    generateEnemyVertical('air', -10, -300);
     generateEnemyVertical('grd', -30, -300);
-    generateEnemyVertical('grd', 30, -300);
     ondaAtual = 2;
     return;
   }
 
   if(ondaAtual === 2){
-    generateEnemyHorizontal('air', 250, 30, 'esq');
-    generateEnemyHorizontal('air', -200, 40, 'dir');
-    generateEnemyDiagonal('air', -150, 20, 'dir', 'up');
-    generateEnemyDiagonal('air', 200, 50, 'esq', 'down');
+    generateEnemyVertical('air', 10, -300);
+    generateEnemyVertical('grd', 30, -300);
+    generateLife('lifeV', -30, -300);
     ondaAtual = 3;
     return;
   }
 
   if(ondaAtual === 3){
+      generateEnemyHorizontal('air', 110, 30, 'esq');
+      generateEnemyHorizontal('air', -110, 40, 'dir');
+      generateLife('lifeV', -30, -300);
       ondaAtual = 4;
       return;
   }
 
   if(ondaAtual === 4){
+      generateEnemyDiagonal('air', -110, 50, 'dir', 'up');
+      generateLife('lifeV', 30, -300);
+      //generateLife('lifeV', -30, -300);
       ondaAtual = 5;
       return;
   }
 
   if(ondaAtual === 5){
+      generateEnemyDiagonal('air', 110, 50, 'esq', 'up');
+      //generateLife('lifeV', 30, -300);
+      generateLife('lifeV', -30, -300);
       ondaAtual = 6;
       return;
   }
 
   if(ondaAtual === 6){
+      generateEnemyVertical('air', 35, -300);
+      generateEnemyVertical('grd', 0, -300);
       ondaAtual = 7;
       return;
   }
 
   if(ondaAtual === 7){
+      generateEnemyArco('air', 110, 10, 'esq');
+      generateEnemyArco('air', -110, 10, 'dir');
       ondaAtual = 8;
       return;
   }
 
   if(ondaAtual === 8){
+      generateEnemyHorizontal('air', 110, 30, 'esq');
+      generateEnemyVertical('grd', -30, -300);
+      generateLife('lifeV', 0, -300);
       ondaAtual = 9;
       return;
   }
 
   if(ondaAtual === 9){
+      generateEnemyArco('air', 110, 50, 'esq');
+      generateEnemyArco('air', -110, 50, 'dir');
+      generateLife('lifeV', 0, -300);
       ondaAtual = 10;
       return;
   }
 
   if(ondaAtual === 10){
+    //generateEnemyVertical('grd', -30, -300);
+    generateEnemyArco('air', 110, 50, 'esq');
+    //generateEnemyHorizontal('air', 110, 30, 'esq');
+    ondaAtual = 11;
+    return;
+  }
+
+  if(ondaAtual === 11){
+    //generateEnemyVertical('grd', 30, -300);
+    generateEnemyHorizontal('air', -110, 30, 'esq');
+    //generateEnemyArco('air', -110, 50, 'esq');
+    ondaAtual = 12;
+    return;
+  }
+
+  if(ondaAtual === 12){
+    generateEnemyHorizontal('air', 110, -10, 'esq');
+    generateEnemyHorizontal('air', -110, -20, 'dir');
+    generateLife('lifeV', -30, -300);
+    ondaAtual = 13;
+    return;
   }
 }
 

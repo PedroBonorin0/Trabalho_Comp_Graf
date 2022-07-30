@@ -69,7 +69,7 @@ export function movelife() {
     if(life.isArch)
       life.rotateY(life.spin);
   
-    if(life.position.z > 100 || life.position.x < -100 || life.position.x > 100) {
+    if(life.position.z > 120 || life.position.x < -120 || life.position.x > 120) {
       life.removeFromParent();
       lifeOnScreen.splice(indexToRemove, 1);
     }

@@ -36,7 +36,7 @@ export function moveEnemies() {
         aux.object.rotateY(enemy.spin);
       }
   
-      if(enemy.position.z > 120 || enemy.position.x < -300 || enemy.position.x > 300) {
+      if(enemy.position.z > 110 || enemy.position.x < -140 || enemy.position.x > 120) {
         enemy.removeFromParent();
         aux.object.removeFromParent();
 
