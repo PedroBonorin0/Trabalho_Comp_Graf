@@ -25,14 +25,24 @@ createLight(scene);
 var scene2 = new THREE.Scene();    // Create second
 scene2.background = new THREE.Color(0xa3a3a3);
 
-// Variáveis Gerais
-// let posicaoSomePlano = -8E-14;
-// let posicaoCriaPlano = 2E-14;
-// let velocidadePlano = -0.5;
-
 let posicaoSomePlano = -11E-14;
 let posicaoCriaPlano = -2E-14;
 let velocidadePlano = -0.5;
+
+// -- SET SOUNDS ----------------------------------------------------------------------------------
+var audioLoader = new THREE.AudioLoader();
+var listener = new THREE.AudioListener();
+
+var music = new THREE.Audio(listener);
+
+audioLoader.load('./sounds/resistence.mp3', function(buffer) {
+  music.setBuffer(buffer);
+  music.setLoop(true);
+  if(music.isPlaying){
+    music.stop();
+  }
+  music.play();
+});
 
 var loader = new GLTFLoader();
 
@@ -199,7 +209,15 @@ function controlledRender()
 
 var pause = false;
 var canClick = true;
-//criaWorld();
+
+function atualizaMusica(){
+  if(pause && music.isPlaying)
+    music.stop();
+
+  if(!pause && !music.isPlaying)
+    music.play()
+}
+
 // render ------------------------------------------------------------------------------------------------------------------------
 render();
 function render()
@@ -212,6 +230,8 @@ function render()
       canClick = true;
     }, 500);
   }
+
+  atualizaMusica();
 
   keyboardUpdate(keyboard, boxPlane, airPlane);
 

@@ -26,7 +26,6 @@ var loader = new GLTFLoader();
 
 
 export function playerShoot(scn, player, keyboard) {
-  console.log('Click', clickOnPrevFrame);
 
   if(keyboard.pressed("ctrl")){
     buildShot(scn, null, player, 3);

@@ -55,25 +55,25 @@ export function keyboardUpdate(kb, obj, airPlane){
 }
 
 function rotateAirplane(direction, airPlane) {
-  if(airPlane !== undefined && direction === 'dir' && rotaDir < 25){
-    airPlane.rotateZ(degreesToRadians(2));
+  if(airPlane !== undefined && direction === 'dir' && rotaDir < 11){
+    airPlane.rotateZ(degreesToRadians(3));
     rotaDir = rotaDir + 1;
   }
 
-  if(airPlane !== undefined && direction === 'esq' && rotaEsq < 25){
-    airPlane.rotateZ(degreesToRadians(-2));
+  if(airPlane !== undefined && direction === 'esq' && rotaEsq < 11){
+    airPlane.rotateZ(degreesToRadians(-3));
     rotaEsq = rotaEsq + 1;
   }
 }
 
 function fixRotation(direction, airPlane) {
   if(airPlane !== undefined && direction === 'dir' && rotaDir>0){
-    airPlane.rotateZ(degreesToRadians(-2));
+    airPlane.rotateZ(degreesToRadians(-3));
     rotaDir--;
   }
 
   if(airPlane !== undefined && direction === 'esq' && rotaEsq>0){
-    airPlane.rotateZ(degreesToRadians(2));
+    airPlane.rotateZ(degreesToRadians(3));
     rotaEsq--;
   }
 }
