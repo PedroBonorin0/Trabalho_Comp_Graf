@@ -54,6 +54,7 @@ function onButtonPressed() {
     const element = e.target;
     element.remove();  
   });  
+
   // Config and play the loaded audio
   let sound = new THREE.Audio( new THREE.AudioListener() );
   audioLoader.load( audioPath, function( buffer ) {

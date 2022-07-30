@@ -1,6 +1,4 @@
 import * as THREE from  'three';
-import Stats from       '../build/jsm/libs/stats.module.js';
-import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initCamera,
         initDefaultBasicLight,
@@ -13,17 +11,33 @@ var renderer = initRenderer();    // View function in util/utils
 var camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
 initDefaultBasicLight(scene);
 
-// Enable mouse rotation, pan, zoom etc.
-var trackballControls = new TrackballControls( camera, renderer.domElement );
+  let button  = document.getElementById("myBtn")
+  button.innerHTML = 'START';
+  button.addEventListener("click", onButtonPressed);
 
 
-// Listen window size changes
-window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
+function onButtonPressed() {
+    const loadingScreen = document.getElementById( 'load-tela' );
+    document.getElementById('load-screen').style.display= "none";
+    start();
+    loadingScreen.transition = 0;
+    loadingScreen.classList.add( 'fade-out' );
+    loadingScreen.addEventListener( 'transitionend', (e) => {
+      const element = e.target;
+      element.remove();  
+    });  
+}
+
+
+/*function start(){
+}
+*/
+
+
 
 render();
 function render()
 {
-  trackballControls.update(); // Enable mouse movements
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
 }
