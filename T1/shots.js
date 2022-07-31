@@ -29,6 +29,7 @@ var loader = new GLTFLoader();
 
 
 export function playerShoot(scn, player, keyboard) {
+  console.log('segudando', taSegurando)
 
   if(keyboard.pressed("ctrl")){
     buildShot(scn, null, player, 3);
@@ -40,6 +41,7 @@ export function playerShoot(scn, player, keyboard) {
     clickOnPrevFrame = true;
   } else {
     clickOnPrevFrame = false;
+    taSegurando = false;
   }
   
   if(keyboard.pressed("space") && player.canMissel)

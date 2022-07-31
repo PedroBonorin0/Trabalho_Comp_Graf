@@ -2,7 +2,7 @@ import * as THREE from  'three';
 import { degreesToRadians} from '../libs/util/util.js';
 import { animateDeadEnemies, animateDeadPlayer, colisions} from './colision.js';
 import {inicializeKeyboard, keyboardUpdate} from './playerLogic.js'
-import { enemiesOnScreen, moveEnemies } from './enemiesLogic.js';
+import { moveEnemies } from './enemiesLogic.js';
 import { generateLife, movelife } from './lifeCSG.js';
 import { playerShoot, moveShots } from './shots.js';
 import {initRenderer,
@@ -16,14 +16,15 @@ import { Water } from '../build/jsm/objects/Water.js';  // Water shader in here
 
 // Inicialização de elelmentos -------------------------------------------------------------------------------------------------- 
 var scene = new THREE.Scene();    // Create main scene
-var renderer = initRenderer();    // View function in util/utils
+var renderer = initRenderer({ alpha: true });    // View function in util/utils
 var camera = initCamera(new THREE.Vector3(0, 100, 140)); // Init camera in this position
 // initDefaultBasicLight(scene);
 //createLight(scene);
 createLight(scene);
 
 var scene2 = new THREE.Scene();    // Create second
-scene2.background = new THREE.Color(0xa3a3a3);
+// scene2.background = new THREE.Color(0xa3a3a3);
+renderer.autoClear = false;
 
 let posicaoSomePlano = -11E-14;
 let posicaoCriaPlano = -2E-14;
@@ -203,6 +204,7 @@ function controlledRender()
   renderer.setViewport(offset, height-vcHeidth-offset, vcWidth, vcHeidth);  // Set virtual camera viewport  
   renderer.setScissor(offset, height-vcHeidth-offset, vcWidth, vcHeidth); // Set scissor with the same size as the viewport
   renderer.setScissorTest(true); // Enable scissor to paint only the scissor are (i.e., the small viewport)
+  renderer.setClearColor(0x000000, 0);
   renderer.clear(); // Clean the small viewport
   renderer.render(scene2, virtualCamera);  // Render scene of the virtual camera
 }
